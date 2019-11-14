@@ -1,0 +1,31 @@
+{
+  "name": "chart",
+  "version": "1.0.0",
+  "description": "bubble chart  objects",
+  "main": "build/bundle.js",
+  "scripts": {
+    "test": "dev",
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EyobDejene/functional-programming.git"
+  },
+  "keywords": [
+    "chart"
+  ],
+  "author": "Eyob Westerink",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EyobDejene/functional-programming/issues"
+  },
+  "homepage": "https://github.com/EyobDejene/functional-programming#readme",
+  "devDependencies": {
+    "rollup": "^1.27.0"
+  },
+  "dependencies": {
+    "d3": "^5.12.0",
+    "rollup-watch": "^4.3.1"
+  }
+}
