@@ -69,3 +69,4 @@ Zorg ervoor dat de volgende software correct zijn geïnstalleerd.
 
 ## Acknowledgements/credits
 *  Helping sparql query & d3 [Nick](https://github.com/CountNick)
+
