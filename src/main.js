@@ -22,7 +22,7 @@ function render(data) {
     let paddingObject = 5;
     let magnifyStartPosition = 3; //multiplier circle start postion
 
-    let scaleColor = d3.scaleOrdinal(d3.schemeSet3); // set colorsheme for the circles
+    let scaleColor = d3.scaleOrdinal(d3.schemeSet2); // set colorsheme for the circles
 
 // calculate radius of the circle with pack
     /**
