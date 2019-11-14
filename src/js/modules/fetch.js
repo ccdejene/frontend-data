@@ -6,26 +6,26 @@ export function loadApiData() {
     const termMaster = 'termmaster1248'//objectgenres;
     const query = `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX edm: <http://www.europeana.eu/schemas/edm/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
-WHERE {
- # geef Objecttrefwoord
- <https://hdl.handle.net/20.500.11840/`+termMaster+`> skos:narrower* ?type .
- ?type skos:prefLabel ?objectType .
- # Geef alle continenten
- <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
- ?orginSuper skos:prefLabel ?orgin .
- # geef per continent de onderliggende geografische termen
- ?orginSuper skos:narrower* ?orginSub .
- ?orginSub skos:prefLabel ?orginSubLabel .
- # geef objecten bij de onderliggende geografische termen
- ?cho dct:spatial ?orginSub .
- ?cho edm:object ?type .
-}
+        PREFIX dc: <http://purl.org/dc/elements/1.1/>
+        PREFIX dct: <http://purl.org/dc/terms/>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        PREFIX edm: <http://www.europeana.eu/schemas/edm/>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
+        WHERE {
+         # geef Objecttrefwoord
+         <https://hdl.handle.net/20.500.11840/`+termMaster+`> skos:narrower* ?type .
+         ?type skos:prefLabel ?objectType .
+         # Geef alle continenten
+         <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
+         ?orginSuper skos:prefLabel ?orgin .
+         # geef per continent de onderliggende geografische termen
+         ?orginSuper skos:narrower* ?orginSub .
+         ?orginSub skos:prefLabel ?orginSubLabel .
+         # geef objecten bij de onderliggende geografische termen
+         ?cho dct:spatial ?orginSub .
+         ?cho edm:object ?type .
+        }
         `;
 
 
@@ -75,7 +75,6 @@ WHERE {
             }
 
             // return ranklist in sepperate arrays
-            // return rankList
 
             // merge all arrays to one array
             return rankList.flat()
