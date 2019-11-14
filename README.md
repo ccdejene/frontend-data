@@ -1,11 +1,14 @@
 # Waar kan ik het meeste vinden van ...
-Met deze visualisatie kan er achter komen hoeveel objecten van bepaald onderwerp zijn te vinden in het museum<br>
-de objecten worden gecategoriseerd op continent<br>
+
 
 <a href="https://gyazo.com/ad38a89d268cb5a20f205c9444fb7dcf"><img src="https://i.gyazo.com/ad38a89d268cb5a20f205c9444fb7dcf.gif" alt="Image from Gyazo" width="1000"/></a>
 
 ## Concept
-De datavis
+Met deze visualisatie kan er achter komen hoeveel objecten van bepaald onderwerp zijn te vinden in het museum<br>
+de objecten worden gecategoriseerd op continent<br>
+De bezoeker kan met behulp van zijn of haar eigen input het onderwerp invoeren om er achter te komen waar de meeste 
+objecten 
+vandaan komen.
 
 ## Live demo
 [Bekijk hier de visualisatie](https://eyobdejene.github.io/)
@@ -43,7 +46,6 @@ wereldculturen op te vragen.
 Lees [wiki](https://github.com/EyobDejene/frontend-applications/wiki) voor het hele proces. 
 
 
-
 ## Prerequisites
 Zorg ervoor dat de volgende software correct zijn geïnstalleerd.
 
@@ -64,12 +66,6 @@ Zorg ervoor dat de volgende software correct zijn geïnstalleerd.
 
 ## Further Reading / Useful Links
 
-* [ember.js](https://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
 
 ## Acknowledgements/credits
-*  Helping with data fetch in Ember [Nick](https://github.com/CountNick)
-*  Component linking to template in Ember [Chazz](https://github.com/Chazzers/) & [Nick](https://github.com/CountNick)
+*  Helping sparql query & d3 [Nick](https://github.com/CountNick)
