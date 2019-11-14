@@ -1,0 +1,33 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Helvetica, Calibri, Roboto, Open Sans, sans-serif;
+    -webkit-backface-visibility: hidden;
+}
+
+* {
+    box-sizing: inherit;
+}
+h1 {
+    text-align: center;
+    font-size: 12px;
+}
+svg {
+    margin:auto;
+    display:block;
+}
+
+.legend-size circle {
+    fill: rgb(31, 119, 180);
+}
+
+.node-orgin{
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.node-amount{
+    color: #ffffff;
+    pointer-events: none;
+}
