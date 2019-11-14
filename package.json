@@ -4,7 +4,8 @@
   "description": "bubble chart  objects",
   "main": "build/bundle.js",
   "scripts": {
-    "test": "dev",
+    "start":  "rollup -c",
+    "test": "rollup -c",
     "build": "rollup -c",
     "dev": "rollup -c -w"
   },
