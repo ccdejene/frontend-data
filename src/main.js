@@ -8,7 +8,7 @@ function render(data) {
 // make svg element
     let svg = d3.select('body').append('svg')
         .attr('width', '100%')
-        .attr('height', '800')
+        .attr('height',  window.innerHeight)
         .attr('text-anchor', 'middle');
 
     svg.style('background-color', '#eee'); // set background color
