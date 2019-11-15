@@ -95,3 +95,5 @@ repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoe
 ## Acknowledgements/credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
 *  Helpen met sparql query & d3 [Nick](https://github.com/CountNick)
+
+
