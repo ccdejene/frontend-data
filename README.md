@@ -35,8 +35,11 @@ Via SparQL queries (RDF gebaseerde gegevens) is het mogelijk om bepaalde informa
 wereldculturen op te vragen.<br>
 [Lees meer](https://github.com/EyobDejene/functional-programming/wiki/Data-query)
 
+## Features
+* Fetch data van collectie database
+* Weergeven van data in visualisatie
+
 ## Toekomstige features
-* Api fetch
 * Zoom-in op bubble
 
 ## Code snippets
