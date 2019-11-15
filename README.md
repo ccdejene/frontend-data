@@ -85,14 +85,14 @@ GitHub Pages is een statische site-hostingservice die HTML-, CSS- en JavaScript-
 repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoert en een website publiceert
 * [Deploy de app op githubpages](https://pages.github.com/)
 
-## Further Reading / Useful Links
+## Gebruikte bronnen / Handige links
 * [Documentation D3.js](https://github.com/d3/d3/wiki)
 * [Introduction to D3.js](https://www.xenonstack.com/blog/d3js/)
 * [Naustud.io](https://naustud.io/tech-stack/)
 * [Responding to text](https://bl.ocks.org/curran/a683a360b9c78397a0db94ce15f473ce)
 * [Introduction SVG](https://learn-the-web.algonquindesign.ca/courses/web-dev-3/svg-smiley-face/)
 
-## Acknowledgements/credits
+## Credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
 *  Helpen met sparql query & d3 [Nick](https://github.com/CountNick)
 
