@@ -7,12 +7,24 @@ import {loadApiData} from "./js/modules/fetch";
 // function to render data
 function render(data) {
 
+
+    // var expensesByName  = d3.nest()
+    //     .key(function(d) { return d.orgin; })
+    //     .entries(data);
+    //
+    // console.log(expensesByName);
+
     // make svg element
     let svg = d3.select('body').append('svg')
         .attr('width', '100%')
         .attr('height',  window.innerHeight)
         .attr('text-anchor', 'middle');
 
+
+    // create a wrapper
+    let wrapper = d3.select("svg")
+        .append("g")
+        .attr('class', 'wrapper')
     // set background color
     svg.style('background-color', '#eee');
 
@@ -25,7 +37,7 @@ function render(data) {
     let centerY = height * 0.5; // center position of Y
     let minRadius = 0; // set minRadius of circle
     let paddingObject = 5; // padding between circles
-    let magnifyStartPosition = 3; //multiplier circle start postion
+    let magnifyStartPosition = 3000; //multiplier circle start postion
     let scaleColor = d3.scaleOrdinal(d3.schemeSet2); // set colorsheme for the circles
 
 
@@ -57,11 +69,20 @@ function render(data) {
      *  If nodes is not specified, it defaults to the empty array.
      *  The simulator starts automatically; use simulation.on to listen for tick events as the simulation runs.
      */
+
     let simulation = d3.forceSimulation()
         .force('charge', d3.forceManyBody())
-        .force('collide', forceCollide)
-        .force('x', d3.forceX(centerX))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        // .force('collision', forceCollide)
+        .force('collide', d3.forceCollide().radius(function(d) {
+            return d.radius
+
+        }))
+        // .force('x', d3.forceX(centerX))
         .force('y', d3.forceY(centerY))
+        .force('x', d3.forceX(centerX))
+
+
 
     /**
      * Hierarchy
@@ -76,10 +97,13 @@ function render(data) {
     let root = d3.hierarchy({children: data})
         .sum(d => d.amount);
 
+
+
     // Use pack() to automatically calculate radius conveniently only
     // and get only the leaves
     //
-    let circles = pack(root).leaves().map(circle => {
+    let circles = pack(root).leaves()
+        .map(circle => {
         const data = circle.data;
         return {
             x: centerX + (circle.x - centerX) * magnifyStartPosition, // magnify start position to have transition to center movement
@@ -92,16 +116,26 @@ function render(data) {
         }
     });
 
+    console.log(circles);
+
+
+
+
 
     // select all circles
-    let circle = svg.selectAll('.node')
+    let circle = wrapper.selectAll('.node')
         .data(circles)
-        .enter().append('g')
+        .enter()
+        .append('g')
         .attr('class', 'node') // add class node to object
+
+
+    //console.log(circles.filter(function(d) { return d.cat == "Afrika"; }));
 
 
     // add the simulation to the circles
     simulation.nodes(circles).on('tick', ticked);
+
 
     circle.append('circle')
         .attr('r', minRadius)
@@ -111,9 +145,10 @@ function render(data) {
             let i = d3.interpolateNumber(0, d.radius);
             return (t) => {
                 d.r = i(t);
-                simulation.force('collide', forceCollide)
+                simulation.force('collision', forceCollide)
             }
         });
+
 
     /**
      * Own code to automatic resize the text within the circle
@@ -178,11 +213,38 @@ function render(data) {
 
     // Set the radius of the circle and changes the position
     function ticked() {
-        circle
-            .attr('transform', d => `translate(${d.x},${d.y})`)
-            .select('circle')
-            .attr('r', d => d.r);
+            circle
+                .attr('transform', d => `translate(${d.x},${d.y})`)
+                .select('circle')
+                .attr('r', d => d.r)
+                .on("click", clicked)
+                .exit()
+                .remove()
     }
+
+
+
+
+    svg.attr("viewBox", [0, 0, width, height])
+
+
+
+    function clicked(d) {
+        d3.event.stopPropagation();
+        svg.transition().duration(750).call(
+            zoom.transform,
+            d3.zoomIdentity.translate(width / 2, height / 2).scale(15).translate(-d.x, -d.y),
+            d3.mouse(svg.node())
+        );
+    }
+
+    function zoomed() {
+        wrapper.attr("transform", d3.event.transform);
+    }
+
+    let zoom = d3.zoom()
+        .scaleExtent([1, 40])
+        .on("zoom", zoomed);
 
 }
 

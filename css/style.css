@@ -31,3 +31,10 @@ svg {
     color: #ffffff;
     pointer-events: none;
 }
+
+text{
+    cursor: pointer;
+}
+circle{
+    cursor: pointer;
+}
