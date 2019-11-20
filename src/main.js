@@ -4,6 +4,7 @@
 
 import {loadApiData} from "./js/modules/fetch";
 
+
 // function to render data
 function render(data) {
 
@@ -116,7 +117,7 @@ function render(data) {
         }
     });
 
-    console.log(circles);
+
 
 
 
@@ -127,8 +128,13 @@ function render(data) {
         .data(circles)
         .enter()
         .append('g')
-        .attr('class', 'node') // add class node to object
+        .attr('class', d => d.cat + " node")
+        // .classed({
+        //     'node': true,
+        //     'category':function(d){ return d.cat}}) // add class node to object
+        // .attr({'class',  d => d.cat}) // add class node to object
 
+    console.log(circle);
 
     //console.log(circles.filter(function(d) { return d.cat == "Afrika"; }));
 
@@ -140,6 +146,9 @@ function render(data) {
     circle.append('circle')
         .attr('r', minRadius)
         .style('fill', d => scaleColor(d.cat))
+        //.style('fill',"transparent")
+        .style('stroke', "rgba(0, 0, 0, 0.05)")
+        //.style('stroke-width', "1")
         .transition().duration(2000).ease(d3.easeElasticOut)
         .tween('circleIn', (d) => {
             let i = d3.interpolateNumber(0, d.radius);
@@ -148,7 +157,6 @@ function render(data) {
                 simulation.force('collision', forceCollide)
             }
         });
-
 
     /**
      * Own code to automatic resize the text within the circle
@@ -217,23 +225,111 @@ function render(data) {
                 .attr('transform', d => `translate(${d.x},${d.y})`)
                 .select('circle')
                 .attr('r', d => d.r)
-                .on("click", clicked)
                 .exit()
                 .remove()
     }
 
 
+    let nodes = d3.selectAll('.node')
 
 
-    svg.attr("viewBox", [0, 0, width, height])
+    /**
+     * filter on origin
+     */
+
+    function filterByCategory(circles,category){
+        //circles.filter(function(d) { return d.cat == category; })
+        let filtered = circles.filter(
+                function(d) {
+                    return d.cat == category;
+                })
+            // .enter()
+           // .remove();
+           //.transition().duration(1000).style("opacity", .30);
+       // const circless = wrapper.selectAll('.node').data(filtered)
+        let circle = d3.select('.wrapper')
+            .data(filtered)
+            .enter()
+            .remove();
+
+        circle.selectAll(".node").transition().duration(500).attr("opacity",0.3);
+        let selected = circle.selectAll("."+category).transition().duration(500).attr("opacity",1);
+        //circle.attr('fill', 'red');
+
+            // .attr("opacity",0.2)
+       // svg.selectAll("."+grp).attr('data-category'category).style("opacity", 0).attr("r", 0)
+       console.log(selected);
+
+    }
+
+    function resetFilter(){
+        wrapper.selectAll(".node").transition().duration(500).attr("opacity",1);
+    }
+
+
+    //let body = d3.selectAll("body")
+   // body.on("click",function(d){filterByCategory(circles,"Afrika")})
+
+
+    let label = d3.select(".legendCells").selectAll('.label')
+    label.on("click",clickedlabel)
+
+    function clickedlabel(d){
+        //nodes.data(data.filter(function(d){console.log( d.cat == "Afrika");}))
+        console.log(d)
+        filterByCategory(circles,d)
+    }
 
 
 
+
+
+    /**
+     * tooltip
+     */
+    let tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+    nodes.on("mouseover", showTooltip)
+    nodes.on("mouseout", hideTooltip)
+    nodes.on("mousemove",followMouseTooltip)
+    function showTooltip(d){
+        d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.90)")
+        tooltip.transition().duration(200).style("opacity", .9);
+        tooltip.html(`<span class="objectOrgin">${d.cat}</span>
+                      <span class="objectType">${d.objectType}</span>
+                      <span class="objectAmount">${d.amount}</span>`)
+
+
+        filterByCategory(circles,d.cat)
+
+    }
+
+    function followMouseTooltip(){
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+    }
+
+    function hideTooltip(){
+        d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0)")
+        tooltip.transition().duration(500).style("opacity", 0);
+
+        resetFilter()
+    }
+
+
+
+
+    /**
+     * Zoom function
+     */
+    nodes.on("click", clicked)
+    svg.on("click",reset)
     function clicked(d) {
         d3.event.stopPropagation();
-        svg.transition().duration(750).call(
+        wrapper.transition().duration(750).call(
             zoom.transform,
-            d3.zoomIdentity.translate(width / 2, height / 2).scale(15).translate(-d.x, -d.y),
+            // zoom on circle based and scale based on radius
+            d3.zoomIdentity.translate(width / 2, height / 2).scale(15 / d.radius * 20).translate(-d.x, -d.y),
             d3.mouse(svg.node())
         );
     }
@@ -245,6 +341,16 @@ function render(data) {
     let zoom = d3.zoom()
         .scaleExtent([1, 40])
         .on("zoom", zoomed);
+
+    // reset the zoom when clicked on background of svg
+    function reset() {
+        wrapper.transition().duration(750).call(
+            zoom.transform,
+            d3.zoomIdentity,
+            d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+        );
+    }
+
 
 }
 

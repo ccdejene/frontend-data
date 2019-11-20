@@ -38,3 +38,25 @@ text{
 circle{
     cursor: pointer;
 }
+
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    width: auto;
+    height: auto;
+    padding: 4px;
+    font: 12px sans-serif;
+    background: #ffffff;
+    border: 0px;
+    border-radius: 10px;
+    pointer-events: none;
+}
+
+.tooltip .objectOrgin{
+    font-weight: bold;
+    display: block;
+}
+
+.tooltip span{
+    padding-left: 0.5rem;
+}

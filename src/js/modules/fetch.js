@@ -18,7 +18,7 @@ export function loadApiData() {
         SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
         WHERE {
          # geef Objecttrefwoord
-         <https://hdl.handle.net/20.500.11840/` + termMaster + `> skos:narrower* ?type .
+         <https://hdl.handle.net/20.500.11840/${termMaster}> skos:narrower* ?type .
          ?type skos:prefLabel ?objectType .
          # Geef alle continenten
          <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
