@@ -53,10 +53,29 @@ div.tooltip {
 }
 
 .tooltip .objectOrgin{
-    font-weight: bold;
     display: block;
 }
 
+.tooltip .objectType{
+    font-weight: bold;
+}
+
+
 .tooltip span{
     padding-left: 0.5rem;
+}
+
+.tooltip .categoryTitle {
+    padding-left: 0rem;
+}
+
+.categoryOrgin{
+    border-radius: 120px;
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+}
+
+.active{
+    font-weight: bold;
 }

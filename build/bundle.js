@@ -210,9 +210,6 @@
 
 
 
-
-
-
         // select all circles
         let circle = wrapper.selectAll('.node')
             .data(circles)
@@ -324,50 +321,89 @@
 
 
         /**
-         * filter on origin
+         * filter by origin
          */
 
-        function filterByCategory(circles,category){
+        function filterByCategoryMultiple(circles,orginsArray){
             //circles.filter(function(d) { return d.cat == category; })
-            let filtered = circles.filter(
-                    function(d) {
-                        return d.cat == category;
-                    });
-                // .enter()
+            //resetFilter()
+            wrapper.selectAll(".node")
+                .filter(function(d) {
+                    return ! orginsArray.includes(d.cat);
+                })
+               .transition().duration(500).style("opacity",0.1);
                // .remove();
-               //.transition().duration(1000).style("opacity", .30);
-           // const circless = wrapper.selectAll('.node').data(filtered)
-            let circle = d3.select('.wrapper')
-                .data(filtered)
-                .enter()
-                .remove();
 
-            circle.selectAll(".node").transition().duration(500).attr("opacity",0.3);
-            let selected = circle.selectAll("."+category).transition().duration(500).attr("opacity",1);
-            //circle.attr('fill', 'red');
+            wrapper.selectAll(".node")
+                .filter(function(d) {
+                    return orginsArray.includes(d.cat);
+                })
+                .transition().duration(500).style("opacity",1);
 
-                // .attr("opacity",0.2)
-           // svg.selectAll("."+grp).attr('data-category'category).style("opacity", 0).attr("r", 0)
-           console.log(selected);
+            if(orginsArray.length == 0){
+                wrapper.selectAll(".node")
+                    .transition()
+                    .duration(500)
+                    .style("opacity",1);
+
+            }
+
 
         }
+
+        function filterByCategory(circles,orgin) {
+            console.log(orgin);
+            let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
+            console.log(labelsChecked);
+            if (labelsChecked == 0 ) {
+                wrapper.selectAll(".node")
+                    .filter(function (d) {
+                        return d.cat !== orgin;
+                    })
+                    .transition().duration(500).style("opacity", 0.1);
+
+                wrapper.selectAll(".node")
+                    .filter(function (d) {
+                        return d.cat == orgin;
+                    })
+                    .transition().duration(500).style("opacity", 1);
+            }
+        }
+
+
+
 
         function resetFilter(){
-            wrapper.selectAll(".node").transition().duration(500).attr("opacity",1);
+            let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
+            if(labelsChecked == 0) {
+                wrapper.selectAll(".node").transition().duration(500).style("opacity", 1);
+            }
         }
 
 
-        //let body = d3.selectAll("body")
-       // body.on("click",function(d){filterByCategory(circles,"Afrika")})
+        /**
+         * filter based on legend
+         */
 
-
-        let label = d3.select(".legendCells").selectAll('.label');
+        let label = svg.select(".legendCells").selectAll('.label');
         label.on("click",clickedlabel);
+        function clickedlabel(){
+            // check if the selected element contains active else remove active
+            if(d3.select(this).classed('active')){
+                d3.select(this).classed('active',false);
+            }else{
+                d3.select(this).classed('active',true);
+            }
+            // push selected orgin in array
+            let labelSelected = label.filter(".active").nodes();
+            let orginsArray = new Array;
+            for(let orgin of labelSelected){
+                orginsArray.push(orgin.textContent);
+            }
 
-        function clickedlabel(d){
-            //nodes.data(data.filter(function(d){console.log( d.cat == "Afrika");}))
-            console.log(d);
-            filterByCategory(circles,d);
+            //var keysList = array.push(labelSelected)
+            console.log(orginsArray);
+            filterByCategoryMultiple(circles,orginsArray);
         }
 
 
@@ -386,11 +422,15 @@
         function showTooltip(d){
             d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.90)");
             tooltip.transition().duration(200).style("opacity", .9);
-            tooltip.html(`<span class="objectOrgin">${d.cat}</span>
+            tooltip.html(`
+                      <span class="objectOrgin">
+                        <span class="categoryOrgin" style="background-color:${scaleColor(d.cat)};"></span>
+                        <span class="categoryTitle"> ${d.cat}</span>
+                      </span>
                       <span class="objectType">${d.objectType}</span>
                       <span class="objectAmount">${d.amount}</span>`);
 
-
+            console.log(scaleColor(d.cat));
             filterByCategory(circles,d.cat);
 
         }
@@ -402,7 +442,6 @@
         function hideTooltip(){
             d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0)");
             tooltip.transition().duration(500).style("opacity", 0);
-
             resetFilter();
         }
 
