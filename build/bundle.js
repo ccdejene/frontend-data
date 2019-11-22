@@ -21,7 +21,7 @@
         SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
         WHERE {
          # geef Objecttrefwoord
-         <https://hdl.handle.net/20.500.11840/` + termMaster + `> skos:narrower* ?type .
+         <https://hdl.handle.net/20.500.11840/${termMaster}> skos:narrower* ?type .
          ?type skos:prefLabel ?objectType .
          # Geef alle continenten
          <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
@@ -44,7 +44,8 @@
                 // objectItem.id = i;
                 objectItem.orgin = objectItem.orgin.value;
                 objectItem.objectType = objectItem.objectType.value;
-                objectItem.amount = JSON.parse(objectItem.amount.value);
+                objectItem.amount = JSON.parse(objectItem.amount.value
+                );
             }
 
             // make array only of the orgins
@@ -77,6 +78,8 @@
                     rankList.push(orginList);
                 }
                 // merge all arrays to one array
+                // return rankList.flat()
+
                 return rankList.flat()
             }
             // return  the ranklist
@@ -91,8 +94,16 @@
 
     // Based loosely from this D3 bubble graph https://bl.ocks.org/mbostock/4063269
 
+
     // function to render data
     function render(data) {
+
+
+        // var expensesByName  = d3.nest()
+        //     .key(function(d) { return d.orgin; })
+        //     .entries(data);
+        //
+        // console.log(expensesByName);
 
         // make svg element
         let svg = d3.select('body').append('svg')
@@ -100,6 +111,11 @@
             .attr('height',  window.innerHeight)
             .attr('text-anchor', 'middle');
 
+
+        // create a wrapper
+        let wrapper = d3.select("svg")
+            .append("g")
+            .attr('class', 'wrapper');
         // set background color
         svg.style('background-color', '#eee');
 
@@ -112,7 +128,7 @@
         let centerY = height * 0.5; // center position of Y
         let minRadius = 0; // set minRadius of circle
         let paddingObject = 5; // padding between circles
-        let magnifyStartPosition = 3; //multiplier circle start postion
+        let magnifyStartPosition = 3000; //multiplier circle start postion
         let scaleColor = d3.scaleOrdinal(d3.schemeSet2); // set colorsheme for the circles
 
 
@@ -144,11 +160,20 @@
          *  If nodes is not specified, it defaults to the empty array.
          *  The simulator starts automatically; use simulation.on to listen for tick events as the simulation runs.
          */
+
         let simulation = d3.forceSimulation()
             .force('charge', d3.forceManyBody())
-            .force('collide', forceCollide)
-            .force('x', d3.forceX(centerX))
-            .force('y', d3.forceY(centerY));
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            // .force('collision', forceCollide)
+            .force('collide', d3.forceCollide().radius(function(d) {
+                return d.radius
+
+            }))
+            // .force('x', d3.forceX(centerX))
+            .force('y', d3.forceY(centerY))
+            .force('x', d3.forceX(centerX));
+
+
 
         /**
          * Hierarchy
@@ -163,10 +188,13 @@
         let root = d3.hierarchy({children: data})
             .sum(d => d.amount);
 
+
+
         // Use pack() to automatically calculate radius conveniently only
         // and get only the leaves
         //
-        let circles = pack(root).leaves().map(circle => {
+        let circles = pack(root).leaves()
+            .map(circle => {
             const data = circle.data;
             return {
                 x: centerX + (circle.x - centerX) * magnifyStartPosition, // magnify start position to have transition to center movement
@@ -180,25 +208,40 @@
         });
 
 
+
+
         // select all circles
-        let circle = svg.selectAll('.node')
+        let circle = wrapper.selectAll('.node')
             .data(circles)
-            .enter().append('g')
-            .attr('class', 'node'); // add class node to object
+            .enter()
+            .append('g')
+            .attr('class', d => d.cat + " node");
+            // .classed({
+            //     'node': true,
+            //     'category':function(d){ return d.cat}}) // add class node to object
+            // .attr({'class',  d => d.cat}) // add class node to object
+
+        console.log(circle);
+
+        //console.log(circles.filter(function(d) { return d.cat == "Afrika"; }));
 
 
         // add the simulation to the circles
         simulation.nodes(circles).on('tick', ticked);
 
+
         circle.append('circle')
             .attr('r', minRadius)
             .style('fill', d => scaleColor(d.cat))
+            //.style('fill',"transparent")
+            .style('stroke', "rgba(0, 0, 0, 0.05)")
+            //.style('stroke-width', "1")
             .transition().duration(2000).ease(d3.easeElasticOut)
             .tween('circleIn', (d) => {
                 let i = d3.interpolateNumber(0, d.radius);
                 return (t) => {
                     d.r = i(t);
-                    simulation.force('collide', forceCollide);
+                    simulation.force('collision', forceCollide);
                 }
             });
 
@@ -265,11 +308,178 @@
 
         // Set the radius of the circle and changes the position
         function ticked() {
-            circle
-                .attr('transform', d => `translate(${d.x},${d.y})`)
-                .select('circle')
-                .attr('r', d => d.r);
+                circle
+                    .attr('transform', d => `translate(${d.x},${d.y})`)
+                    .select('circle')
+                    .attr('r', d => d.r)
+                    .exit()
+                    .remove();
         }
+
+
+        let nodes = d3.selectAll('.node');
+
+
+        /**
+         * filter by origin
+         */
+
+        function filterByCategoryMultiple(circles,orginsArray){
+            //circles.filter(function(d) { return d.cat == category; })
+            //resetFilter()
+            wrapper.selectAll(".node")
+                .filter(function(d) {
+                    return ! orginsArray.includes(d.cat);
+                })
+               .transition().duration(500).style("opacity",0.1);
+               // .remove();
+
+            wrapper.selectAll(".node")
+                .filter(function(d) {
+                    return orginsArray.includes(d.cat);
+                })
+                .transition().duration(500).style("opacity",1);
+
+            if(orginsArray.length == 0){
+                wrapper.selectAll(".node")
+                    .transition()
+                    .duration(500)
+                    .style("opacity",1);
+
+            }
+
+
+        }
+
+        function filterByCategory(circles,orgin) {
+            console.log(orgin);
+            let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
+            console.log(labelsChecked);
+            if (labelsChecked == 0 ) {
+                wrapper.selectAll(".node")
+                    .filter(function (d) {
+                        return d.cat !== orgin;
+                    })
+                    .transition().duration(500).style("opacity", 0.1);
+
+                wrapper.selectAll(".node")
+                    .filter(function (d) {
+                        return d.cat == orgin;
+                    })
+                    .transition().duration(500).style("opacity", 1);
+            }
+        }
+
+
+
+
+        function resetFilter(){
+            let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
+            if(labelsChecked == 0) {
+                wrapper.selectAll(".node").transition().duration(500).style("opacity", 1);
+            }
+        }
+
+
+        /**
+         * filter based on legend
+         */
+
+        let label = svg.select(".legendCells").selectAll('.label');
+        label.on("click",clickedlabel);
+        function clickedlabel(){
+            // check if the selected element contains active else remove active
+            if(d3.select(this).classed('active')){
+                d3.select(this).classed('active',false);
+            }else{
+                d3.select(this).classed('active',true);
+            }
+            // push selected orgin in array
+            let labelSelected = label.filter(".active").nodes();
+            let orginsArray = new Array;
+            for(let orgin of labelSelected){
+                orginsArray.push(orgin.textContent);
+            }
+
+            //var keysList = array.push(labelSelected)
+            console.log(orginsArray);
+            filterByCategoryMultiple(circles,orginsArray);
+        }
+
+
+
+
+
+        /**
+         * tooltip
+         */
+        let tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+        nodes.on("mouseover", showTooltip);
+        nodes.on("mouseout", hideTooltip);
+        nodes.on("mousemove",followMouseTooltip);
+        function showTooltip(d){
+            d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.90)");
+            tooltip.transition().duration(200).style("opacity", .9);
+            tooltip.html(`
+                      <span class="objectOrgin">
+                        <span class="categoryOrgin" style="background-color:${scaleColor(d.cat)};"></span>
+                        <span class="categoryTitle"> ${d.cat}</span>
+                      </span>
+                      <span class="objectType">${d.objectType}</span>
+                      <span class="objectAmount">${d.amount}</span>`);
+
+            console.log(scaleColor(d.cat));
+            filterByCategory(circles,d.cat);
+
+        }
+
+        function followMouseTooltip(){
+            tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        }
+
+        function hideTooltip(){
+            d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0)");
+            tooltip.transition().duration(500).style("opacity", 0);
+            resetFilter();
+        }
+
+
+
+
+        /**
+         * Zoom function
+         */
+        nodes.on("click", clicked);
+        svg.on("click",reset);
+        function clicked(d) {
+            d3.event.stopPropagation();
+            wrapper.transition().duration(750).call(
+                zoom.transform,
+                // zoom on circle based and scale based on radius
+                d3.zoomIdentity.translate(width / 2, height / 2).scale(15 / d.radius * 20).translate(-d.x, -d.y),
+                d3.mouse(svg.node())
+            );
+        }
+
+        function zoomed() {
+            wrapper.attr("transform", d3.event.transform);
+        }
+
+        let zoom = d3.zoom()
+            .scaleExtent([1, 40])
+            .on("zoom", zoomed);
+
+        // reset the zoom when clicked on background of svg
+        function reset() {
+            wrapper.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity,
+                d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+            );
+        }
+
 
     }
 

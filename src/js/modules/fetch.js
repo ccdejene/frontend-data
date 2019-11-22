@@ -18,7 +18,7 @@ export function loadApiData() {
         SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
         WHERE {
          # geef Objecttrefwoord
-         <https://hdl.handle.net/20.500.11840/` + termMaster + `> skos:narrower* ?type .
+         <https://hdl.handle.net/20.500.11840/${termMaster}> skos:narrower* ?type .
          ?type skos:prefLabel ?objectType .
          # Geef alle continenten
          <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
@@ -41,7 +41,8 @@ export function loadApiData() {
             // objectItem.id = i;
             objectItem.orgin = objectItem.orgin.value
             objectItem.objectType = objectItem.objectType.value
-            objectItem.amount = JSON.parse(objectItem.amount.value)
+            objectItem.amount = JSON.parse(objectItem.amount.value
+            )
         }
 
         // make array only of the orgins
@@ -74,6 +75,8 @@ export function loadApiData() {
                 rankList.push(orginList)
             }
             // merge all arrays to one array
+            // return rankList.flat()
+
             return rankList.flat()
         }
         // return  the ranklist
