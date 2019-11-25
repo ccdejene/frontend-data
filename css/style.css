@@ -167,6 +167,7 @@ form{
     padding: 22px 18px;
     margin-left: 50px;
     border-radius: 2px;
+    margin-bottom: 20px;
 }
 
 
@@ -256,4 +257,24 @@ form{
     font-size: 1.6rem;
     color: #eef0ff;
     font-weight: 200;
+}
+
+.option{
+    background-color: #1eca6a;
+    border-style: hidden;
+    padding: 1rem;
+    font-family: sans-serif;
+    color: white;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.option:hover{
+    background: #1bb760;
+}
+
+form p{
+    display: block;
+    padding: 0;
+    margin: 0;
 }

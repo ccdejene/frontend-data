@@ -15,6 +15,7 @@ let input  = d3.select('#serchTerm')
 let searchTermBox  = d3.select(".searchbox")
 let searchTermText  = d3.select(".searchTerm")
 let searchButton  =   d3.select('.search')
+let optionButton  =   d3.select('form').selectAll('.option')
 
 checkForm()
 
@@ -65,9 +66,23 @@ function showForm(){
     field.classed("FormInActive", false)
     searchTermBox.classed("visible", false)
     searchButton.classed("visible", false)
+    d3.select("#vis-container")
+        .classed("showChart", false)
+        .transition()
+        .duration(800)
+        .delay(1500)
+
+}
+
+function autoFill(e){
+    event.preventDefault()
+    let optionValue = d3.select(this).attr("value")
+    let form_field = d3.select(".form_field")
+    form_field.attr("value",optionValue)
 
 }
 
 searchButton.on("click",showForm)
+optionButton.on("click",autoFill)
 
 
