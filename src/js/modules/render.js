@@ -123,7 +123,7 @@ export function render(data) {
         circle.append('circle')
             .attr('r', minRadius)
             .style('fill', d => scaleColor(d.cat))
-            .style('stroke', "rgba(0, 0, 0, 0.05)")
+            .style('stroke', "rgba(0, 0, 0, 0.02)")
             .transition().duration(2000).ease(d3.easeElasticOut)
             .tween('circleIn', (d) => {
                 let i = d3.interpolateNumber(0, d.radius);
@@ -333,7 +333,7 @@ export function render(data) {
     nodes.on("mouseout", hideTooltip)
     nodes.on("mousemove",followMouseTooltip)
     function showTooltip(d){
-        d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.90)")
+        d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.4)")
         tooltip.transition().duration(200).style("opacity", .9);
         tooltip.html(`
                       <span class="objectOrgin">
