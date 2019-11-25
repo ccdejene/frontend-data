@@ -2,8 +2,9 @@ html, body {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    font-family: Helvetica, Calibri, Roboto, Open Sans, sans-serif;
+    font-family: 'Roboto', sans-serif;
     -webkit-backface-visibility: hidden;
+    background-color: #eee;
 }
 
 * {
@@ -77,5 +78,180 @@ div.tooltip {
 }
 
 .active{
+    font-family: sans-serif;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.legendCells .label:hover
+{
+    text-decoration: underline;
+}
+
+
+form h1{
+    text-align: center;
+    padding-top: 10px;
+    font-size: 15px;
+    font-family: sans-serif;
+    font-weight: 600;
+}
+
+.FormInActive{
+    top:-100rem;
+}
+
+.FormError{
+    border-style: solid!important;
+    border-width: 1px;
+    border-color: red;
+}
+
+
+form{
+    width: 500px;
+    height: 100px;
+    background-color: transparent;
+    position:absolute;
+    left:0; right:0;
+    top:0; bottom:0;
+    margin:auto;
+    max-width:100%;
+    max-height:100%;
+    -webkit-transition: top 1s;
+    transition: top 1s;
+}
+
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.btn {
+    display: inline-block;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    border: 0;
+    outline: 0;
+    padding: 0;
+    transition: all 200ms ease-in;
+    cursor: pointer;
+}
+.btn_primary {
+    background: #7f8ff4;
+    color: #fff;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    padding: 12px 36px;
+}
+.btn_primary:hover {
+    background: #6c7ff2;
+}
+.btn_primary:active {
+    background: #7f8ff4;
+    box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.2);
+}
+.btn_inside {
+    margin-left: -96px;
+}
+
+.form_field {
+    width: 360px;
+    background: #fff;
+    color: #8d8d8d;
+    font: inherit;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
+    border-style:none;
+    outline: 0;
+    padding: 22px 18px;
+    margin-left: 50px;
+    border-radius: 2px;
+}
+
+
+
+.searchbox{
+    height: auto;
+    width: 300px;
+    position: absolute;
+    padding: 10px;
+    right: 20px;
+    margin-top: 30px;
+    visibility: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+
+}
+
+.searchbox span{
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+}
+
+.searchbox .searchTerm{
+    font-weight: normal;
+}
+
+.visible{
+    visibility: visible!important;
+}
+
+.bar {
+    opacity: 1;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+#vis-container{
+    border-radius: 2px;
+    background-color: rgba(255, 255, 255, 1);;
+    position: absolute;
+    bottom: 2rem;
+    left: -200rem;
+    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.1);
+    -webkit-transition: left 1s;
+    transition: left 1s;
+}
+
+.axis-x text{
+    font-size: 6px;
     font-weight: bold;
+}
+
+
+.showChart{
+    left:2rem !important;
+
+}
+
+.search{
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    background: #7f8ff4;
+    box-shadow:  0 0 10px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
+    bottom: 2rem;
+    right: 2rem;
+    visibility: hidden;
+}
+
+.search:hover{
+    background: #6c7ff2;
+}
+
+
+.search .fa-search{
+    padding: 0.8rem;
+    font-size: 1.6rem;
+    color: #eef0ff;
+    font-weight: 200;
 }
