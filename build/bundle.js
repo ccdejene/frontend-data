@@ -291,8 +291,8 @@
 
         // sets sizeScale
         let sizeScale = d3.scaleOrdinal()
-            .domain(['Minder', 'Meer'])
-            .range([5, 10]);
+            .domain([''])
+            .range([0,10]);
 
         // sets legendSize between circles
         let legendSize = d3.legendSize()
@@ -527,8 +527,7 @@
 
         //This function will change the graph when the user selects another variable
         function selectionChanged(data, selected) {
-            //'this' refers to the form element!
-            console.log("Changing graph to reflect this variable", data);
+
             // set domain
             y.domain([0, d3.max(data.map(d => d.amount))]);
             x.domain(data.map(d => d.objectType));
