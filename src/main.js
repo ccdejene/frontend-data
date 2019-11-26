@@ -1,11 +1,5 @@
-// Based loosely from this D3 bubble graph https://bl.ocks.org/mbostock/4063269
-// And this Forced directed diagram https://bl.ocks.org/mbostock/4062045
-// Code edit by Eyob Westerink
-
 import {loadApiData} from "./js/modules/fetch";
 import {render} from "./js/modules/render";
-
-
 
 /**
  * Own code to run the application
@@ -17,6 +11,7 @@ let searchTermText  = d3.select(".searchTerm")
 let searchButton  =   d3.select('.search')
 let optionButton  =   d3.select('form').selectAll('.option')
 
+// check form
 checkForm()
 
 function checkForm(){
@@ -74,12 +69,12 @@ function showForm(){
 
 }
 
-function autoFill(e){
+function autoFill(){
     event.preventDefault()
     let optionValue = d3.select(this).attr("value")
     let form_field = d3.select(".form_field")
     form_field.attr("value",optionValue)
-
+    form_field.node().value = optionValue
 }
 
 searchButton.on("click",showForm)

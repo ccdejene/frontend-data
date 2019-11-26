@@ -12,7 +12,6 @@
             {category:"keukengereedschap",termmaster: "termmaster14783"},
             {category:"vervoersmiddelen",termmaster: "termmaster12626"},
             {category:"rookgerei",termmaster: "termmaster14607"}
-
             ];
         const termMaster = termMasterArray.filter(x => x.category === serchTerm).map(x => x.termmaster);
         console.log(termMaster);
@@ -109,20 +108,18 @@
 
     }
 
+    // Based loosely from this D3 bubble graph https://bl.ocks.org/mbostock/4063269
+    // And this Forced directed diagram https://bl.ocks.org/mbostock/4062045
+    // Code edit by Eyob Westerink
+
+
     // function to render data
     function render(data) {
-
-
-        // var expensesByName  = d3.nest()
-        //     .key(function(d) { return d.orgin; })
-        //     .entries(data);
-        //
-        // console.log(expensesByName);
 
         // make svg element
         let svg = d3.select('body').append('svg')
             .attr('width', '100%')
-            .attr('height',  window.innerHeight)
+            .attr('height', window.innerHeight)
             .attr('text-anchor', 'middle');
 
 
@@ -179,7 +176,7 @@
             .force('charge', d3.forceManyBody())
             .force('center', d3.forceCenter(width / 2, height / 2))
             // .force('collision', forceCollide)
-            .force('collide', d3.forceCollide().radius(function(d) {
+            .force('collide', d3.forceCollide().radius(function (d) {
                 return d.radius
 
             }))
@@ -204,7 +201,6 @@
 
         // Use pack() to automatically calculate radius conveniently only
         // and get only the leaves
-        //
         let circles = pack(root).leaves()
             .map(circle => {
                 const data = circle.data;
@@ -215,69 +211,69 @@
                     radius: circle.r, //original radius
                     cat: data.orgin,
                     objectType: data.objectType,
-                    amount: data.amount,
+                    amount: data.amount
                 }
             });
 
 
-            // select all circles
-            let circle = wrapper.selectAll('.node')
-                .data(circles)
-                .enter()
-                .append('g')
-                .attr('class', d => d.cat + " node");
+        // select all circles
+        let circle = wrapper.selectAll('.node')
+            .data(circles)
+            .enter()
+            .append('g')
+            .attr('class', d => d.cat + " node");
 
-            // add the simulation to the circles
-            simulation.nodes(circles).on('tick', ticked);
+        // add the simulation to the circles
+        simulation.nodes(circles).on('tick', ticked);
+
+        circle.append('circle')
+            .attr('r', minRadius)
+            .style('fill', d => scaleColor(d.cat))
+            .style('stroke', "rgba(0, 0, 0, 0.02)")
+            .transition().duration(2000).ease(d3.easeElasticOut)
+            .tween('circleIn', (d) => {
+                let i = d3.interpolateNumber(0, d.radius);
+                return (t) => {
+                    d.r = i(t);
+                    simulation.force('collision', forceCollide);
+                }
+            });
 
 
-            circle.append('circle')
-                .attr('r', minRadius)
-                .style('fill', d => scaleColor(d.cat))
-                .style('stroke', "rgba(0, 0, 0, 0.02)")
-                .transition().duration(2000).ease(d3.easeElasticOut)
-                .tween('circleIn', (d) => {
-                    let i = d3.interpolateNumber(0, d.radius);
-                    return (t) => {
-                        d.r = i(t);
-                        simulation.force('collision', forceCollide);
-                    }
-                });
 
-            /**
-             * Own code to automatic resize the text within the circle
-             */
+        /**
+         * Own code to automatic resize the text within the circle
+         */
+        // display orgin in circle
+        circle
+            .append('text')
+            .classed('node-orgin', true)
+            .attr("font-size", function (d) {
+                return Math.min(2 * d.radius, (2 * d.radius / 15)) + "px";
+            })
+            .text(d => d.objectType);
 
-            // display orgin in circle
+        //display amount in the circle
+        circle
+            .append('text')
+            .classed('node-amount', true)
+            .attr('y', function (d) {
+                return Math.min(2 * d.radius, (2 * d.radius / 10));
+            })
+            .attr("font-size", function (d) {
+                return Math.min(2 * d.radius, (2 * d.radius / 12));
+            })
+            .text(d => d.amount);
+
+        // Set the radius of the circle and changes the position
+        function ticked() {
             circle
-                .append('text')
-                .classed('node-orgin', true)
-                .attr("font-size", function (d) {
-                    return Math.min(2 * d.radius, (2 * d.radius / 15)) + "px";
-                })
-                .text(d => d.objectType);
-
-            //display amount in the circle
-            circle
-                .append('text')
-                .classed('node-amount', true)
-                .attr('y', function (d) {
-                    return Math.min(2 * d.radius, (2 * d.radius / 10));
-                })
-                .attr("font-size", function (d) {
-                    return Math.min(2 * d.radius, (2 * d.radius / 12));
-                })
-                .text(d => d.amount);
-
-            // Set the radius of the circle and changes the position
-            function ticked() {
-                circle
-                    .attr('transform', d => `translate(${d.x},${d.y})`)
-                    .select('circle')
-                    .attr('r', d => d.r)
-                    .exit()
-                    .remove();
-            }
+                .attr('transform', d => `translate(${d.x},${d.y})`)
+                .select('circle')
+                .attr('r', d => d.r)
+                .exit()
+                .remove();
+        }
 
         /**
          * Shows legend in visual based on category and set color scale for each category
@@ -313,73 +309,46 @@
             .style('font-size', '12px')
             .call(legendSize);
 
-
-
         let nodes = d3.selectAll('.node');
 
 
         /**
          * filter by origin
          */
-            //update by category
-        function filterByCategoryMultiple(circles,orginsArray){
-            //circles.filter(function(d) { return d.cat == category; })
-            //resetFilter()
+        //update by category
+        function filterByCategoryMultiple(circles, orginsArray) {
 
-
+            // if category filter doesnt includes category array give  circles opacity
             wrapper.selectAll(".node")
-                .filter(function(d) {
-                    return ! orginsArray.includes(d.cat);
-                })
-            .transition().duration(500).style("opacity",0.1);
+                .filter(function (d) {
+                    return !orginsArray.includes(d.cat);
+                }).classed("disable", true)
+                .transition().duration(500).style("opacity", 0.1);
 
-
+            // if category filter  includes category array give  circles remove opacity
             wrapper.selectAll(".node")
-                .filter(function(d) {
+                .filter(function (d) {
                     return orginsArray.includes(d.cat);
-                })
-                .transition().duration(500).style("opacity",1);
+                }).classed("disable", false)
+                .transition().duration(500).style("opacity", 1);
 
-
-
-
-
-            // wrapper.selectAll(".node")
-            //     .filter(function(d) {
-            //         return! orginsArray.includes(d.cat);
-            //     }).exit().remove()
-
-
-
-
-            // let filtered = wrapper.selectAll(".node")
-            //     .filter(function(d) {
-            //         return! orginsArray.includes(d.cat);
-            //     })
-                // .transition().duration(500).style("opacity",0.1)
-
-
-            // filtered.exit().remove();
-            //filtered.transition().duration(500).style("opacity",0.1)
-            //console.log("dsd",filtered)
-           // renderCircles(filtered)
-
-
-
-            if(orginsArray.length == 0){
+            // if array is empty reset to show all circles
+            if (orginsArray.length == 0) {
                 wrapper.selectAll(".node")
+                    .classed("disable", false)
                     .transition()
                     .duration(500)
-                    .style("opacity",1);
-
+                    .style("opacity", 1);
             }
-
-
         }
 
-        function filterByCategory(circles,orgin) {
+
+        /**
+         * Single filter on hover circle
+         */
+        function filterByCategory(circles, orgin) {
             let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
-            if (labelsChecked == 0 ) {
+            if (labelsChecked == 0) {
                 wrapper.selectAll(".node")
                     .filter(function (d) {
                         return d.cat !== orgin;
@@ -392,15 +361,14 @@
                     })
                     .transition().duration(500).style("opacity", 1);
             }
-
         }
 
-
-
-
-        function resetFilter(){
+        /**
+         * reset the filter
+         */
+        function resetFilter() {
             let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
-            if(labelsChecked == 0) {
+            if (labelsChecked == 0) {
                 wrapper.selectAll(".node").transition().duration(500).style("opacity", 1);
             }
         }
@@ -409,29 +377,26 @@
         /**
          * filter based on legend
          */
-
         let label = svg.select(".legendCells").selectAll('.label');
-        label.on("click",clickedlabel);
-        function clickedlabel(){
+        label.on("click", clickedlabel);
+
+        function clickedlabel() {
             // check if the selected element contains active else remove active
-            if(d3.select(this).classed('active')){
-                d3.select(this).classed('active',false);
-            }else{
-                d3.select(this).classed('active',true);
+            if (d3.select(this).classed('active')) {
+                d3.select(this).classed('active', false);
+            } else {
+                d3.select(this).classed('active', true);
             }
             // push selected orgin in array
             let labelSelected = label.filter(".active").nodes();
             let orginsArray = new Array;
-            for(let orgin of labelSelected){
+            for (let orgin of labelSelected) {
                 orginsArray.push(orgin.textContent);
             }
 
             //var keysList = array.push(labelSelected)
-            filterByCategoryMultiple(circles,orginsArray);
+            filterByCategoryMultiple(circles, orginsArray);
         }
-
-
-
 
 
         /**
@@ -442,8 +407,9 @@
             .style("opacity", 0);
         nodes.on("mouseover", showTooltip);
         nodes.on("mouseout", hideTooltip);
-        nodes.on("mousemove",followMouseTooltip);
-        function showTooltip(d){
+        nodes.on("mousemove", followMouseTooltip);
+
+        function showTooltip(d) {
             d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.4)");
             tooltip.transition().duration(200).style("opacity", .9);
             tooltip.html(`
@@ -454,28 +420,26 @@
                       <span class="objectType">${d.objectType}</span>
                       <span class="objectAmount">${d.amount}</span>`);
 
-            filterByCategory(circles,d.cat);
+            filterByCategory(circles, d.cat);
 
         }
 
-        function followMouseTooltip(){
-            tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        function followMouseTooltip() {
+            tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
         }
 
-        function hideTooltip(){
+        function hideTooltip() {
             d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0)");
             tooltip.transition().duration(500).style("opacity", 0);
             resetFilter();
         }
 
 
-
-
         /**
          * Zoom function
          */
         nodes.on("click", clicked);
-        svg.on("click",reset);
+        svg.on("click", reset);
         function clicked(d) {
             d3.event.stopPropagation();
             wrapper.transition().duration(750).call(
@@ -488,11 +452,12 @@
 
             // set barchart data
             let orgin = d.cat;
-            let filterData =  circles.filter(function(d) {
+            let filterData = circles.filter(function (d) {
                 return d.cat == orgin;
             });
+            let selected = d3.select(this);
 
-            selectionChanged(filterData);
+            selectionChanged(filterData, selected);
 
         }
 
@@ -523,36 +488,29 @@
          * bar chart
          *
          */
-
-
-
         const svg_bars = d3.select("#vis-container").append('svg');
-        const margin = {top: 40, right: 30, bottom: 90, left: 50};
+        const margin = {top: 40, right: 30, bottom: 90, left: 80};
         const bar_height = 320 - margin.top - margin.bottom;
         const bar_width = 460 - margin.left - margin.right;
         /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
         const group = svg_bars
-            .attr("height","320")
-            .attr("width","460")
+            .attr("height", "320")
+            .attr("width", "460")
             .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // Scales
         const x = d3.scaleBand().padding(0.2);
-        const y = d3.scaleLinear().nice();
-    // Global data variable
-    //The initial variable the y axis is set on
+        const y = d3.scaleLinear();
 
         makeVisualization(data);
-    // Our main function which runs other functions to make a visualization
-     function makeVisualization(data){
-            //Use the prepareData module to get and process our data
-            setupScales(data);
-            setupAxes();
+
+        function makeVisualization(data) {
+            setScales(data);
+            setAxes();
             drawBars(data);
         }
 
-    //Draw the initial bars
+        //Draw the initial bars
         function drawBars(data) {
             const bars = group
                 .selectAll('.bar')
@@ -567,29 +525,35 @@
         }
 
 
-
-    //This function will change the graph when the user selects another variable
-        function selectionChanged(data){
+        //This function will change the graph when the user selects another variable
+        function selectionChanged(data, selected) {
             //'this' refers to the form element!
             console.log("Changing graph to reflect this variable", data);
-
-            y.domain([0, d3.max(data.map(d => d.amount))] );
+            // set domain
+            y.domain([0, d3.max(data.map(d => d.amount))]);
             x.domain(data.map(d => d.objectType));
 
+            //select all bars and remove them
             svg_bars.selectAll(".bar")
                 .data(data)
                 .exit().remove();
 
-
+            // set y axis
             svg_bars.select('.axis-y')
                 .call(d3.axisLeft(y).ticks(10));
 
+            // set bottom axis
             svg_bars.select('.axis-x')
                 .call(d3.axisBottom(x));
 
+            // set bar height and width
             svg_bars.selectAll('.bar')
-                .attr("height", function(d) { return bar_height - y(0); }) // always equal to 0
-                .attr("y", function(d) { return y(0); })
+                .attr("height", function (d) {
+                    return bar_height - y(0);
+                })
+                .attr("y", function (d) {
+                    return y(0);
+                })
                 .transition()
                 .duration(800)
                 .delay(1000)
@@ -599,39 +563,68 @@
                 .attr('height', d => bar_height - y(d.amount))
                 .attr('fill', d => scaleColor(d.cat));
 
+            // remove the label
+            svg_bars.selectAll(".bar-label").remove();
 
+
+            // get data info of selected circle
+            let selectedCircle = selected.nodes()[0].__data__;
+
+
+            // set bar arrow icon to selected bar
+            svg_bars.select('g').selectAll('.bar-label')
+                .data(data.filter(function (d) {
+                    return d.index == selectedCircle.index;
+                }))
+                .enter()
+                .append('text')
+                .classed('bar-label', true)
+                .attr('x', d => x(d.objectType) + x.bandwidth() / 2)
+                .attr('dx', 0)
+                .attr('y', d => y(d.amount))
+                .attr('dy', -6)
+                .style("text-anchor", "middle")
+                .style('opacity', 0)
+                .html('&#9660;')
+                .transition()
+                .duration(800)
+                .delay(1000)
+                .style('opacity', 1);
+
+            // show barchart
             d3.select("#vis-container")
                 .classed("showChart", true)
                 .transition()
                 .duration(800)
                 .delay(1500);
 
+            // add text to barchart x-axis
             let text = d3.select(".axis-x");
             text.selectAll(".tick").select("text")
                 .attr("transform", "rotate(-30)")
-                .classed("ytext",true)
+                .classed("ytext", true)
                 .attr("y", 18)
                 .attr("dy", "-.80em")
                 .attr("x", "-0.5em")
                 .style("text-anchor", "end");
 
-
-            setupScales(data);
+            // setupScales
+            setScales(data);
 
         }
 
-    //Set up the scales we'll use
-        function setupScales(data){
-            //We'll set the x domain to the different preferences
+        //Set scales
+        function setScales(data) {
+            //Set the x domain to the different preferences
             x.domain(data.map(d => d.objectType));
             //The y-domain is set to the min and max of the current y variable
-            y.domain([0, d3.max(data.map(d => d.amount))] );
+            y.domain([0, d3.max(data.map(d => d.amount))]);
             x.rangeRound([0, bar_width]);
             y.rangeRound([bar_height, 0]);
         }
 
-    //Attach x and y axes to our svg
-        function setupAxes(){
+        // add x and y axes to svg
+        function setAxes() {
             group
                 .append('g')
                 .attr('class', 'axis axis-x')
@@ -642,33 +635,34 @@
                 .attr('class', 'axis axis-y')
                 .call(d3.axisLeft(y).ticks(10));
 
+
             let text = d3.select(".axis-x");
             text.selectAll(".tick").select("text")
                 .attr("transform", "rotate(-30)")
-                .classed("ytext",true)
+                .classed("ytext", true)
                 .attr("y", 18)
                 .attr("dy", "-.80em")
                 .attr("x", "-0.5em")
                 .style("text-anchor", "end");
 
+            d3.select('.axis-x')
+                .append('text')
+                .classed("axis-label",true)
+                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350/3))+")")  // centre below axis
+                .text("Object type");
+
+            d3.select('.axis-y')
+                .append('text')
+                .classed("axis-label",true)
+                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate("+ (-50) +","+(bar_height/2)+")rotate(-90)")  // text is drawn off the screen
+                // top left, move down and out and rotate
+                .text("Aantal");
 
         }
 
-    //This awesome function makes dynamic input options based on our data!
-    //You can also create the options by hand if you can't follow what happens here
-
-
-
-
-
-
-
-
     }
-
-    // Based loosely from this D3 bubble graph https://bl.ocks.org/mbostock/4063269
-
-
 
     /**
      * Own code to run the application
@@ -680,6 +674,7 @@
     let searchButton  =   d3.select('.search');
     let optionButton  =   d3.select('form').selectAll('.option');
 
+    // check form
     checkForm();
 
     function checkForm(){
@@ -737,12 +732,12 @@
 
     }
 
-    function autoFill(e){
+    function autoFill(){
         event.preventDefault();
         let optionValue = d3.select(this).attr("value");
         let form_field = d3.select(".form_field");
         form_field.attr("value",optionValue);
-
+        form_field.node().value = optionValue;
     }
 
     searchButton.on("click",showForm);
