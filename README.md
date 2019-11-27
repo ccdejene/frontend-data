@@ -1,6 +1,5 @@
 # Waar kan ik het meeste vinden van ...
-<a href="https://gyazo.com/ad38a89d268cb5a20f205c9444fb7dcf"><img src="https://i.gyazo.com/ad38a89d268cb5a20f205c9444fb7dcf.gif" alt="Image from Gyazo" width="1000"/></a>
-
+<a href="https://gyazo.com/2ff6f826468469cab40d79e5a0e68d1e"><img src="https://i.gyazo.com/2ff6f826468469cab40d79e5a0e68d1e.gif" alt="Image from Gyazo" width="1000"/></a>
 ## Live demo
 [Bekijk de demo](https://eyobdejene.github.io/)
 
@@ -11,14 +10,14 @@ vinden
 De objecten worden op basis van hun continent gecategoriseerd<br>
 De bezoeker kan met behulp van zijn of haar eigen input het onderwerp invoeren om er achter te komen waar de meeste 
 objecten vandaan komen.<br>
-[Lees meer](https://github.com/EyobDejene/functional-programming/wiki/Concept)
+[Lees meer](https://github.com/EyobDejene/functional-data/wiki/Concept)
 
 ## Doelgroep
 Deze visualisatie is gemaakt voor de bezoekers van het museum.
 Als bezoeker heb je misschien een voorkeur voor bepaalde objecten die je graag wil zien.
-Aangezien het museum verdeelt is in continenten leek het mij handig om de objecten in de visualisatie te categoriseren 
-op basis van het continent.
-Daarom is deze visualisatie handig om te gebruiken bij het vinden van de objecten binnen het museum.
+Aangezien het museum verdeelt is in continenten heb ik de objecten in de visualisatie gecategoriseerd
+op basis van hun continent.
+De visualisatie is handig om te gebruiken bij het vinden van de objecten binnen het museum.
 Niet alle objecten zijn te vinden in het museum daarom zou het ook prettig zijn om te kunnen zien of de objecten 
 tentoon worden gesteld.
 
@@ -98,5 +97,6 @@ repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoe
 ## Credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
 *  Helpen met sparql query & d3 [Nick](https://github.com/CountNick)
+
 
 

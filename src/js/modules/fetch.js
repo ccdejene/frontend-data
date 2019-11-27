@@ -8,7 +8,7 @@ export function loadApiData(serchTerm) {
         {category:"geluidsmiddelen",termmaster: "termmaster1248"},
         {category:"keukengereedschap",termmaster: "termmaster14783"},
         {category:"vervoersmiddelen",termmaster: "termmaster12626"},
-        {category:"rookgerei",termmaster: "termmaster14607"}
+        {category:"sieraden",termmaster: "termmaster13201"}
         ]
     const termMaster = termMasterArray.filter(x => x.category === serchTerm).map(x => x.termmaster)
     console.log(termMaster)
