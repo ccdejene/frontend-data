@@ -4,14 +4,21 @@
     /**
      * Own code for load the data
      */
-    function loadApiData() {
-
-
+    function loadApiData(serchTerm) {
         // setup api url and query
         const url = 'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-27/sparql';
-        // const termMaster = 'termmaster13119'//objectgenres;
-        const termMaster = 'termmaster1248';//objectgenres;
-        const query = `
+        const termMasterArray = [
+            {category:"geluidsmiddelen",termmaster: "termmaster1248"},
+            {category:"keukengereedschap",termmaster: "termmaster14783"},
+            {category:"vervoersmiddelen",termmaster: "termmaster12626"},
+            {category:"rookgerei",termmaster: "termmaster14607"}
+            ];
+        const termMaster = termMasterArray.filter(x => x.category === serchTerm).map(x => x.termmaster);
+        console.log(termMaster);
+        // termMaster = "termmaster12626"
+        // if search contains in array
+        if(termMaster.length > 0) {
+            const query = `
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX dc: <http://purl.org/dc/elements/1.1/>
         PREFIX dct: <http://purl.org/dc/terms/>
@@ -21,7 +28,7 @@
         SELECT  ?orgin ?objectType (COUNT(?cho) AS ?amount)
         WHERE {
          # geef Objecttrefwoord
-         <https://hdl.handle.net/20.500.11840/${termMaster}> skos:narrower* ?type .
+         <https://hdl.handle.net/20.500.11840/${termMaster[0]}> skos:narrower* ?type .
          ?type skos:prefLabel ?objectType .
          # Geef alle continenten
          <https://hdl.handle.net/20.500.11840/termmaster2> skos:narrower ?orginSuper .
@@ -36,79 +43,83 @@
         `;
 
 
-        // handle data
-        const handleData = (json) => {
-            let bindings = json.results.bindings;
-            for (let i = 0; i < bindings.length; i++) {
-                let objectItem = bindings[i];
-                // objectItem.id = i;
-                objectItem.orgin = objectItem.orgin.value;
-                objectItem.objectType = objectItem.objectType.value;
-                objectItem.amount = JSON.parse(objectItem.amount.value
-                );
-            }
-
-            // make array only of the orgins
-            let array = [];
-            let orginsInData = bindings.filter(orgin => {
-                //check if orgin name excists in array
-                if (!array.includes(orgin.orgin)) {
-                    return array.push(orgin.orgin)
+            // handle data
+            const handleData = (json) => {
+                let bindings = json.results.bindings;
+                for (let i = 0; i < bindings.length; i++) {
+                    let objectItem = bindings[i];
+                    // objectItem.id = i;
+                    objectItem.orgin = objectItem.orgin.value;
+                    objectItem.objectType = objectItem.objectType.value;
+                    objectItem.amount = JSON.parse(objectItem.amount.value
+                    );
                 }
-            });
 
-            // Saves orgin Array based on termmaster ["Eurazië","Azië", "Afrika", "Amerika", "Oceanië", "Oceanen","Antarctica"]
-            let orginArray = orginsInData.map(objectobject => objectobject.orgin);
-            let rankList = [];
+                // make array only of the orgins
+                let array = [];
+                let orginsInData = bindings.filter(orgin => {
+                    //check if orgin name excists in array
+                    if (!array.includes(orgin.orgin)) {
+                        return array.push(orgin.orgin)
+                    }
+                });
 
-            // Get the ranklist
-            function getRankList(orginArray, bindings) {
-                let gettop = 10;
-                //loop over Orgins
-                for (let orgin of orginArray) {
-                    let filteredOrgins = bindings.filter(object => {
-                        return object.orgin == orgin
-                    });
-                    let orginList = filteredOrgins
-                    //hoogste waardes sorten van hoog naar laag
-                        .sort((a, b) => b.amount - a.amount)
-                        //pak alleen de top 10
-                        .sort((a, b) => b - a).slice(0, gettop);
-                    // add rank to array orginList
-                    rankList.push(orginList);
+                // Saves orgin Array based on termmaster ["Eurazië","Azië", "Afrika", "Amerika", "Oceanië", "Oceanen","Antarctica"]
+                let orginArray = orginsInData.map(objectobject => objectobject.orgin);
+                let rankList = [];
+
+                // Get the ranklist
+                function getRankList(orginArray, bindings) {
+                    let gettop = 10;
+                    //loop over Orgins
+                    for (let orgin of orginArray) {
+                        let filteredOrgins = bindings.filter(object => {
+                            return object.orgin == orgin
+                        });
+                        let orginList = filteredOrgins
+                        //hoogste waardes sorten van hoog naar laag
+                            .sort((a, b) => b.amount - a.amount)
+                            //pak alleen de top 10
+                            .sort((a, b) => b - a).slice(0, gettop);
+                        // add rank to array orginList
+                        rankList.push(orginList);
+                    }
+                    // merge all arrays to one array
+                    // return rankList.flat()
+
+                    return rankList.flat()
                 }
-                // merge all arrays to one array
-                // return rankList.flat()
 
-                return rankList.flat()
-            }
-            // return  the ranklist
-            return getRankList(orginArray, bindings)
-        };
+                // return  the ranklist
+                return getRankList(orginArray, bindings)
+            };
 
-        return d3.json(url + '?query=' + encodeURIComponent(query) + '&format=json')
-            .then(handleData)
-            .catch(err => console.error(err));
+            return d3.json(url + '?query=' + encodeURIComponent(query) + '&format=json')
+                .then(handleData)
+                .finally(function () {
+                    d3.select("form")
+                        .classed("FormInActive",true);
+                })
+                .catch(err => console.error(err));
+        }else{
+            //if searchterm not found return false
+            return false
+        }
 
     }
 
     // Based loosely from this D3 bubble graph https://bl.ocks.org/mbostock/4063269
+    // And this Forced directed diagram https://bl.ocks.org/mbostock/4062045
+    // Code edit by Eyob Westerink
 
 
     // function to render data
     function render(data) {
 
-
-        // var expensesByName  = d3.nest()
-        //     .key(function(d) { return d.orgin; })
-        //     .entries(data);
-        //
-        // console.log(expensesByName);
-
         // make svg element
         let svg = d3.select('body').append('svg')
             .attr('width', '100%')
-            .attr('height',  window.innerHeight)
+            .attr('height', window.innerHeight)
             .attr('text-anchor', 'middle');
 
 
@@ -150,7 +161,7 @@
          * forceCollide is used to stop elements overlapping and is particularly useful when 'clumping' circles together.
          * We must specify the radius of the elements using .radius() : var numNodes = 100 var nodes = d3. range(numNodes).
          */
-        // stop elements overlapping and set padding between circles
+            // stop elements overlapping and set padding between circles
         let forceCollide = d3.forceCollide(d => d.radius + paddingObject);
 
         // use the force and simulate
@@ -165,14 +176,13 @@
             .force('charge', d3.forceManyBody())
             .force('center', d3.forceCenter(width / 2, height / 2))
             // .force('collision', forceCollide)
-            .force('collide', d3.forceCollide().radius(function(d) {
+            .force('collide', d3.forceCollide().radius(function (d) {
                 return d.radius
 
             }))
             // .force('x', d3.forceX(centerX))
             .force('y', d3.forceY(centerY))
             .force('x', d3.forceX(centerX));
-
 
 
         /**
@@ -184,30 +194,26 @@
          * It has a number of functions defined on it for retrieving things like ancestor, descendant and leaf nodes and for computing the path between nodes.
          * It can be created from a nested JavaScript object.
          */
-        // creating nested data structure of the data objects
+            // creating nested data structure of the data objects
         let root = d3.hierarchy({children: data})
-            .sum(d => d.amount);
-
+                .sum(d => d.amount);
 
 
         // Use pack() to automatically calculate radius conveniently only
         // and get only the leaves
-        //
         let circles = pack(root).leaves()
             .map(circle => {
-            const data = circle.data;
-            return {
-                x: centerX + (circle.x - centerX) * magnifyStartPosition, // magnify start position to have transition to center movement
-                y: centerY + (circle.y - centerY) * magnifyStartPosition,
-                r: minRadius, // for tweening
-                radius: circle.r, //original radius
-                cat: data.orgin,
-                objectType: data.objectType,
-                amount: data.amount,
-            }
-        });
-
-
+                const data = circle.data;
+                return {
+                    x: centerX + (circle.x - centerX) * magnifyStartPosition, // magnify start position to have transition to center movement
+                    y: centerY + (circle.y - centerY) * magnifyStartPosition,
+                    r: minRadius, // for tweening
+                    radius: circle.r, //original radius
+                    cat: data.orgin,
+                    objectType: data.objectType,
+                    amount: data.amount
+                }
+            });
 
 
         // select all circles
@@ -216,26 +222,14 @@
             .enter()
             .append('g')
             .attr('class', d => d.cat + " node");
-            // .classed({
-            //     'node': true,
-            //     'category':function(d){ return d.cat}}) // add class node to object
-            // .attr({'class',  d => d.cat}) // add class node to object
-
-        console.log(circle);
-
-        //console.log(circles.filter(function(d) { return d.cat == "Afrika"; }));
-
 
         // add the simulation to the circles
         simulation.nodes(circles).on('tick', ticked);
 
-
         circle.append('circle')
             .attr('r', minRadius)
             .style('fill', d => scaleColor(d.cat))
-            //.style('fill',"transparent")
-            .style('stroke', "rgba(0, 0, 0, 0.05)")
-            //.style('stroke-width', "1")
+            .style('stroke', "rgba(0, 0, 0, 0.02)")
             .transition().duration(2000).ease(d3.easeElasticOut)
             .tween('circleIn', (d) => {
                 let i = d3.interpolateNumber(0, d.radius);
@@ -245,10 +239,11 @@
                 }
             });
 
+
+
         /**
          * Own code to automatic resize the text within the circle
          */
-
         // display orgin in circle
         circle
             .append('text')
@@ -270,6 +265,15 @@
             })
             .text(d => d.amount);
 
+        // Set the radius of the circle and changes the position
+        function ticked() {
+            circle
+                .attr('transform', d => `translate(${d.x},${d.y})`)
+                .select('circle')
+                .attr('r', d => d.r)
+                .exit()
+                .remove();
+        }
 
         /**
          * Shows legend in visual based on category and set color scale for each category
@@ -287,8 +291,8 @@
 
         // sets sizeScale
         let sizeScale = d3.scaleOrdinal()
-            .domain(['Minder', 'Meer'])
-            .range([5, 10]);
+            .domain([''])
+            .range([0,10]);
 
         // sets legendSize between circles
         let legendSize = d3.legendSize()
@@ -305,57 +309,46 @@
             .style('font-size', '12px')
             .call(legendSize);
 
-
-        // Set the radius of the circle and changes the position
-        function ticked() {
-                circle
-                    .attr('transform', d => `translate(${d.x},${d.y})`)
-                    .select('circle')
-                    .attr('r', d => d.r)
-                    .exit()
-                    .remove();
-        }
-
-
         let nodes = d3.selectAll('.node');
 
 
         /**
          * filter by origin
          */
+        //update by category
+        function filterByCategoryMultiple(circles, orginsArray) {
 
-        function filterByCategoryMultiple(circles,orginsArray){
-            //circles.filter(function(d) { return d.cat == category; })
-            //resetFilter()
+            // if category filter doesnt includes category array give  circles opacity
             wrapper.selectAll(".node")
-                .filter(function(d) {
-                    return ! orginsArray.includes(d.cat);
-                })
-               .transition().duration(500).style("opacity",0.1);
-               // .remove();
+                .filter(function (d) {
+                    return !orginsArray.includes(d.cat);
+                }).classed("disable", true)
+                .transition().duration(500).style("opacity", 0.1);
 
+            // if category filter  includes category array give  circles remove opacity
             wrapper.selectAll(".node")
-                .filter(function(d) {
+                .filter(function (d) {
                     return orginsArray.includes(d.cat);
-                })
-                .transition().duration(500).style("opacity",1);
+                }).classed("disable", false)
+                .transition().duration(500).style("opacity", 1);
 
-            if(orginsArray.length == 0){
+            // if array is empty reset to show all circles
+            if (orginsArray.length == 0) {
                 wrapper.selectAll(".node")
+                    .classed("disable", false)
                     .transition()
                     .duration(500)
-                    .style("opacity",1);
-
+                    .style("opacity", 1);
             }
-
-
         }
 
-        function filterByCategory(circles,orgin) {
-            console.log(orgin);
+
+        /**
+         * Single filter on hover circle
+         */
+        function filterByCategory(circles, orgin) {
             let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
-            console.log(labelsChecked);
-            if (labelsChecked == 0 ) {
+            if (labelsChecked == 0) {
                 wrapper.selectAll(".node")
                     .filter(function (d) {
                         return d.cat !== orgin;
@@ -370,12 +363,12 @@
             }
         }
 
-
-
-
-        function resetFilter(){
+        /**
+         * reset the filter
+         */
+        function resetFilter() {
             let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length;
-            if(labelsChecked == 0) {
+            if (labelsChecked == 0) {
                 wrapper.selectAll(".node").transition().duration(500).style("opacity", 1);
             }
         }
@@ -384,30 +377,26 @@
         /**
          * filter based on legend
          */
-
         let label = svg.select(".legendCells").selectAll('.label');
-        label.on("click",clickedlabel);
-        function clickedlabel(){
+        label.on("click", clickedlabel);
+
+        function clickedlabel() {
             // check if the selected element contains active else remove active
-            if(d3.select(this).classed('active')){
-                d3.select(this).classed('active',false);
-            }else{
-                d3.select(this).classed('active',true);
+            if (d3.select(this).classed('active')) {
+                d3.select(this).classed('active', false);
+            } else {
+                d3.select(this).classed('active', true);
             }
             // push selected orgin in array
             let labelSelected = label.filter(".active").nodes();
             let orginsArray = new Array;
-            for(let orgin of labelSelected){
+            for (let orgin of labelSelected) {
                 orginsArray.push(orgin.textContent);
             }
 
             //var keysList = array.push(labelSelected)
-            console.log(orginsArray);
-            filterByCategoryMultiple(circles,orginsArray);
+            filterByCategoryMultiple(circles, orginsArray);
         }
-
-
-
 
 
         /**
@@ -418,9 +407,11 @@
             .style("opacity", 0);
         nodes.on("mouseover", showTooltip);
         nodes.on("mouseout", hideTooltip);
-        nodes.on("mousemove",followMouseTooltip);
-        function showTooltip(d){
-            d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.90)");
+        nodes.on("mousemove", followMouseTooltip);
+
+
+        function showTooltip(d) {
+            d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.4)");
             tooltip.transition().duration(200).style("opacity", .9);
             tooltip.html(`
                       <span class="objectOrgin">
@@ -430,37 +421,45 @@
                       <span class="objectType">${d.objectType}</span>
                       <span class="objectAmount">${d.amount}</span>`);
 
-            console.log(scaleColor(d.cat));
-            filterByCategory(circles,d.cat);
+            filterByCategory(circles, d.cat);
 
         }
 
-        function followMouseTooltip(){
-            tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        function followMouseTooltip() {
+            tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
         }
 
-        function hideTooltip(){
+        function hideTooltip() {
             d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0)");
             tooltip.transition().duration(500).style("opacity", 0);
             resetFilter();
         }
 
 
-
-
         /**
          * Zoom function
          */
         nodes.on("click", clicked);
-        svg.on("click",reset);
+        svg.on("click", reset);
         function clicked(d) {
             d3.event.stopPropagation();
             wrapper.transition().duration(750).call(
                 zoom.transform,
                 // zoom on circle based and scale based on radius
-                d3.zoomIdentity.translate(width / 2, height / 2).scale(15 / d.radius * 20).translate(-d.x, -d.y),
+                d3.zoomIdentity.translate(width / 2, height / 2).scale(10 / d.radius * 10).translate(-d.x, -d.y),
                 d3.mouse(svg.node())
             );
+
+
+            // set barchart data
+            let orgin = d.cat;
+            let filterData = circles.filter(function (d) {
+                return d.cat == orgin;
+            });
+            let selected = this;
+
+            selectionChanged(filterData, selected,);
+
         }
 
         function zoomed() {
@@ -478,16 +477,288 @@
                 d3.zoomIdentity,
                 d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
             );
+            d3.select("#vis-container")
+                .classed("showChart", false)
+                .transition()
+                .duration(800)
+                .delay(1500);
+
+            // remove glow effect of all circles
+            d3.select('.wrapper').selectAll('circle').classed("glow",false);
         }
 
+
+        /**
+         * bar chart
+         *
+         */
+        const svg_bars = d3.select("#vis-container").append('svg');
+        const margin = {top: 40, right: 30, bottom: 90, left: 50};
+        const bar_height = 320 - margin.top - margin.bottom;
+        const bar_width = 460 - margin.left - margin.right;
+        /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
+        const group = svg_bars
+            .attr("height", "320")
+            .attr("width", "460")
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        const x = d3.scaleBand().padding(0.2);
+        const y = d3.scaleLinear();
+
+        makeVisualization(data);
+
+        function makeVisualization(data) {
+            setScales(data);
+            setAxes();
+            drawBars(data);
+        }
+
+        //Draw the initial bars
+        function drawBars(data) {
+            const bars = group
+                .selectAll('.bar')
+                .data(data)
+                .enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', d => x(d.objectType))
+                .attr('y', d => y(d.amount))
+                .attr('width', x.bandwidth())
+                .attr('height', d => bar_height - y(d.amount));
+        }
+
+
+        //This function will change the graph when the user selects another variable
+        function selectionChanged(data, selected) {
+
+            // set domain
+            y.domain([0, d3.max(data.map(d => d.amount))]);
+            x.domain(data.map(d => d.objectType));
+
+            //select all bars and remove them
+            svg_bars.selectAll(".bar")
+                .data(data)
+                .exit().remove();
+
+            // set y axis
+            svg_bars.select('.axis-y')
+                .call(d3.axisLeft(y).ticks(10));
+
+            // set bottom axis
+            svg_bars.select('.axis-x')
+                .call(d3.axisBottom(x));
+
+            // set bar height and width
+            svg_bars.selectAll('.bar')
+                .attr("height", function (d) {
+                    return bar_height - y(0);
+                })
+                .attr("y", function (d) {
+                    return y(0);
+                })
+                .transition()
+                .duration(800)
+                .delay(1000)
+                .attr('x', d => x(d.objectType))
+                .attr('y', d => y(d.amount))
+                .attr('width', x.bandwidth())
+                .attr('height', d => bar_height - y(d.amount))
+                .attr('fill', d => scaleColor(d.cat));
+
+            // remove the label
+            svg_bars.selectAll(".bar-label").remove();
+
+
+            // get data info of selected circle
+            let selectedCircle = d3.select(selected).nodes()[0].__data__;
+
+            console.log(selected);
+
+            // remove all animation  circles
+            d3.select('.wrapper').selectAll('circle').classed("glow",false);
+
+            //add animation to selected circle glow
+            d3.select(selected).selectAll('circle').classed("glow",true);
+
+
+            // set bar arrow icon to selected bar
+            svg_bars.select('g').selectAll('.bar-label')
+                .data(data.filter(function (d) {
+                    return d.index == selectedCircle.index;
+                }))
+                .enter()
+                .append('text')
+                .classed('bar-label', true)
+                .attr('x', d => x(d.objectType) + x.bandwidth() / 2)
+                .attr('dx', 0)
+                .attr('y', d => y(d.amount))
+                .attr('dy', -6)
+                .style("text-anchor", "middle")
+                .style('opacity', 0)
+                .html('&#9660;')
+                .transition()
+                .duration(800)
+                .delay(1000)
+                .style('opacity', 1);
+
+            // show barchart
+            d3.select("#vis-container")
+                .classed("showChart", true)
+                .transition()
+                .duration(800)
+                .delay(1500);
+
+            // add text to barchart x-axis
+            let text = d3.select(".axis-x");
+            text.selectAll(".tick").select("text")
+                .attr("transform", "rotate(-30)")
+                .classed("ytext", true)
+                .attr("y", 18)
+                .attr("dy", "-.80em")
+                .attr("x", "-0.5em")
+                .style("text-anchor", "end");
+
+            // setupScales
+            setScales(data);
+
+        }
+
+        //Set scales
+        function setScales(data) {
+            //Set the x domain to the different preferences
+            x.domain(data.map(d => d.objectType));
+            //The y-domain is set to the min and max of the current y variable
+            y.domain([0, d3.max(data.map(d => d.amount))]);
+            x.rangeRound([0, bar_width]);
+            y.rangeRound([bar_height, 0]);
+        }
+
+        // add x and y axes to svg
+        function setAxes() {
+            group
+                .append('g')
+                .attr('class', 'axis axis-x')
+                .call(d3.axisBottom(x)).attr('transform', 'translate(0,' + bar_height + ')');
+
+            group
+                .append('g')
+                .attr('class', 'axis axis-y')
+                .call(d3.axisLeft(y).ticks(10));
+
+
+            let text = d3.select(".axis-x");
+            text.selectAll(".tick").select("text")
+                .attr("transform", "rotate(-30)")
+                .classed("ytext", true)
+                .attr("y", 18)
+                .attr("dy", "-.80em")
+                .attr("x", "-0.5em")
+                .style("text-anchor", "end");
+
+            // d3.select('.axis-x')
+            //     .append('text')
+            //     .classed("axis-label",true)
+            //     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            //     .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350/3))+")")  // centre below axis
+            //     .text("Categorie")
+
+            d3.select('.axis-x')
+                .append('text')
+                .classed("axis-label",true)
+                .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+                .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below axis
+                .text("Top 10 meest voorkomende objecten");
+
+            // d3.select('.axis-y')
+            //     .append('text')
+            //     .classed("axis-label",true)
+            //     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            //     .attr("transform", "translate("+ (-50) +","+(bar_height/2)+")rotate(-90)")  // text is drawn off the screen
+            //     // top left, move down and out and rotate
+            //     .text("Aantal")
+
+        }
 
     }
 
     /**
      * Own code to run the application
      */
+    let field  = d3.select('form');
+    let input  = d3.select('#serchTerm');
+    let searchTermBox  = d3.select(".searchbox");
+    let searchTermText  = d3.select(".searchTerm");
+    let searchButton  =   d3.select('.search');
+    let optionButton  =   d3.select('form').selectAll('.option');
 
-    // load the api data and render the data
-    loadApiData().then(data =>render(data));
+    // check form
+    checkForm();
+
+    function checkForm(){
+
+        // check input button on submit
+        let button = d3.select('.btn_primary');
+        button.on("click",function () {
+            let serchTerm = d3.select('#serchTerm').property('value');
+            if(serchTerm !== ""){
+                event.preventDefault();
+                submitForm(serchTerm);
+            }
+        });
+
+        // check keybutton enter
+        const searchInput = d3.select('#serchTerm');
+        searchInput.on('keydown', () => {
+            let serchTerm = d3.select('#serchTerm').property('value');
+            if(d3.event.keyCode == 13){
+                if(serchTerm !== ""){
+                    event.preventDefault();
+                    submitForm(serchTerm);
+                }
+            }
+        });
+
+    }
+
+    // submit form
+    function submitForm(serchTerm){
+        //console.log(serchTerm)
+        if(loadApiData(serchTerm)) {
+            loadApiData(serchTerm).then(data => render(data));
+            searchTermText.text(serchTerm);
+            input.classed("FormError", false);
+            searchTermBox.classed("visible", true);
+            field.classed("FormInActive", true);
+            searchButton.classed("visible", true);
+        }else{
+            input.classed("FormError",true);
+        }
+    }
+
+
+    function showForm(){
+        d3.selectAll('svg').remove();
+        field.classed("FormInActive", false);
+        searchTermBox.classed("visible", false);
+        searchButton.classed("visible", false);
+        d3.select("#vis-container")
+            .classed("showChart", false)
+            .transition()
+            .duration(800)
+            .delay(1500);
+
+    }
+
+    function autoFill(){
+        event.preventDefault();
+        let optionValue = d3.select(this).attr("value");
+        let form_field = d3.select(".form_field");
+        form_field.attr("value",optionValue);
+        form_field.node().value = optionValue;
+    }
+
+    searchButton.on("click",showForm);
+    optionButton.on("click",autoFill);
 
 }());

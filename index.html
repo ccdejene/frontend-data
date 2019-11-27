@@ -5,9 +5,32 @@
 	<script src="src/js/d3/d3.min.js"></script>
 	<script src="src/js/d3/d3-legend.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
-	<h1>Waar kan ik het meeste vinden van: (geluidsmiddelen)?</h1>
+
+
+
+
+	<form class="form">
+	<h1>Waar kan ik het meeste vinden over:</h1>
+			<input id="serchTerm" type="text" class="form_field" value="keukengereedschap"placeholder="Vul onderwerp in"  autofocus/>
+			<button type="button" class="btn btn_primary btn_inside uppercase">Zoek</button>
+			<p>suggesties</p>
+			<button class="option" value="geluidsmiddelen">geluidsmiddelen</button>
+			<button class="option" value="keukengereedschap">keukengereedschap</button>
+			<button class="option" value="vervoersmiddelen">vervoersmiddelen</button>
+			<button class="option" value="rookgerei">rookgerei</button>
+	</form>
+
+	<div class="searchbox">
+		<span>Waar kan ik het meeste vinden over: <span class="searchTerm"></span></span>
+	</div>
+
+	<div id="vis-container"></div>
+	<div class="search"><i class="fa fa-search"></i></div>
 	<script src="build/bundle.js"></script>
 </body>
 </html>
