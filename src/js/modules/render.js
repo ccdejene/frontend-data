@@ -139,7 +139,7 @@ export function render(data) {
         .append('text')
         .classed('node-orgin', true)
         .attr("font-size", function (d) {
-            return Math.min(2 * d.radius, (2 * d.radius / 15)) + "px";
+            return Math.min(2 * d.radius, (2 * d.radius / 20)) + "px";
         })
         .text(d => d.objectType);
 
@@ -382,8 +382,13 @@ export function render(data) {
      * bar chart
      *
      */
+
+    /* pattern from
+    https://beta.vizhub.com/Razpudding/4a61de4a4034423a98ae79d0135781f7?edit=files&file=index.js
+    modified by Eyob Westerink*/
+
     const svg_bars = d3.select("#vis-container").append('svg')
-    const margin = {top: 40, right: 30, bottom: 90, left: 50}
+    const margin = {top: 50, right: 30, bottom: 85, left: 50}
     const bar_height = 320 - margin.top - margin.bottom;
     const bar_width = 460 - margin.left - margin.right
     /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
@@ -509,6 +514,11 @@ export function render(data) {
             .attr("x", "-0.5em")
             .style("text-anchor", "end")
 
+
+        d3.select('.axis-x')
+            .selectAll('.axis-label')
+            .text("De "+data.length+" meest voorkomende objecten")
+
         // setupScales
         setScales(data)
 
@@ -557,8 +567,10 @@ export function render(data) {
             .append('text')
             .classed("axis-label",true)
             .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below axis
-            .text("Top 10 meest voorkomende objecten")
+            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below
+            // axis
+
+
 
         // d3.select('.axis-y')
         //     .append('text')
