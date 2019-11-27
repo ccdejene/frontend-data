@@ -299,6 +299,7 @@ export function render(data) {
     nodes.on("mouseout", hideTooltip)
     nodes.on("mousemove", followMouseTooltip)
 
+
     function showTooltip(d) {
         d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.4)")
         tooltip.transition().duration(200).style("opacity", .9);
@@ -335,7 +336,7 @@ export function render(data) {
         wrapper.transition().duration(750).call(
             zoom.transform,
             // zoom on circle based and scale based on radius
-            d3.zoomIdentity.translate(width / 2, height / 2).scale(10 / d.radius * 15).translate(-d.x, -d.y),
+            d3.zoomIdentity.translate(width / 2, height / 2).scale(10 / d.radius * 10).translate(-d.x, -d.y),
             d3.mouse(svg.node())
         );
 
@@ -345,9 +346,9 @@ export function render(data) {
         let filterData = circles.filter(function (d) {
             return d.cat == orgin;
         });
-        let selected = d3.select(this)
+        let selected = this
 
-        selectionChanged(filterData, selected)
+        selectionChanged(filterData, selected,)
 
     }
 
@@ -371,6 +372,9 @@ export function render(data) {
             .transition()
             .duration(800)
             .delay(1500)
+
+        // remove glow effect of all circles
+        d3.select('.wrapper').selectAll('circle').classed("glow",false)
     }
 
 
@@ -379,7 +383,7 @@ export function render(data) {
      *
      */
     const svg_bars = d3.select("#vis-container").append('svg')
-    const margin = {top: 40, right: 30, bottom: 90, left: 80}
+    const margin = {top: 40, right: 30, bottom: 90, left: 50}
     const bar_height = 320 - margin.top - margin.bottom;
     const bar_width = 460 - margin.left - margin.right
     /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
@@ -457,7 +461,15 @@ export function render(data) {
 
 
         // get data info of selected circle
-        let selectedCircle = selected.nodes()[0].__data__;
+        let selectedCircle = d3.select(selected).nodes()[0].__data__;
+
+        console.log(selected)
+
+        // remove all animation  circles
+        d3.select('.wrapper').selectAll('circle').classed("glow",false)
+
+        //add animation to selected circle glow
+        d3.select(selected).selectAll('circle').classed("glow",true)
 
 
         // set bar arrow icon to selected bar
@@ -534,20 +546,27 @@ export function render(data) {
             .attr("x", "-0.5em")
             .style("text-anchor", "end")
 
+        // d3.select('.axis-x')
+        //     .append('text')
+        //     .classed("axis-label",true)
+        //     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+        //     .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350/3))+")")  // centre below axis
+        //     .text("Categorie")
+
         d3.select('.axis-x')
             .append('text')
             .classed("axis-label",true)
             .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350/3))+")")  // centre below axis
-            .text("Object type")
+            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below axis
+            .text("Top 10 meest voorkomende objecten")
 
-        d3.select('.axis-y')
-            .append('text')
-            .classed("axis-label",true)
-            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ (-50) +","+(bar_height/2)+")rotate(-90)")  // text is drawn off the screen
-            // top left, move down and out and rotate
-            .text("Aantal")
+        // d3.select('.axis-y')
+        //     .append('text')
+        //     .classed("axis-label",true)
+        //     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+        //     .attr("transform", "translate("+ (-50) +","+(bar_height/2)+")rotate(-90)")  // text is drawn off the screen
+        //     // top left, move down and out and rotate
+        //     .text("Aantal")
 
     }
 

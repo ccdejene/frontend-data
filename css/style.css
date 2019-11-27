@@ -26,6 +26,7 @@ svg {
 .node-orgin{
     font-weight: bold;
     color: #ffffff;
+    text-transform: capitalize;
 }
 
 .node-amount{
@@ -286,5 +287,37 @@ form p{
 .axis-label{
     fill: #000000;
     font-size: 12px!important;
-    font-weight: normal!important;
+    font-weight: bold!important;
 }
+
+
+@keyframes pulse-black {
+    0% {
+        transform: scale(0.95);
+        stroke: rgba(0, 0, 0, 0.5);
+        stroke-width: 0px;
+    }
+
+    70% {
+        transform: scale(1);
+        stroke:  rgba(0, 0, 0, 0);
+        stroke-width: 6px;
+    }
+
+    100% {
+        transform: scale(0.95);
+        stroke:  rgba(0, 0, 0, 0);
+        stroke-width: 12px;
+    }
+}
+
+.glow {
+    background: black;
+    border-radius: 50%;
+    stroke:  rgba(0, 0, 0, 1);
+    paint-order: stroke;
+    stroke-width: 0px;
+    transform: scale(1);
+    animation: pulse-black 2s infinite;
+}
+
