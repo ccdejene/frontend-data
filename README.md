@@ -105,9 +105,15 @@ repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoe
 * [Naustud.io](https://naustud.io/tech-stack/)
 * [Responding to text](https://bl.ocks.org/curran/a683a360b9c78397a0db94ce15f473ce)
 * [Introduction SVG](https://learn-the-web.algonquindesign.ca/courses/web-dev-3/svg-smiley-face/)
+* [Bar Chart animated](https://bl.ocks.org/bytesbysophie/952a1003dd188410e9c6262b68a65f9a)
+* [barplot in d3.js](https://www.d3-graph-gallery.com/graph/barplot_basic.html)
+* [Filtering data d3](https://bl.ocks.org/fabiomainardi/00fd581dc5ba92d99eec)
+* [Zoom function](https://observablehq.com/@d3/programmatic-zoom)
+* [Tooltip](http://bl.ocks.org/biovisualize/1016860)
+* [Force](https://www.d3indepth.com/force-layout/)
+
 
 ## Credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
-
-
+*  Example barchart pattern  [Razpudding](https://beta.vizhub.com/Razpudding/4a61de4a4034423a98ae79d0135781f7?edit=files&file=index.js)
 
