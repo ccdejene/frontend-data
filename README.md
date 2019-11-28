@@ -57,16 +57,15 @@ wereldculturen op te vragen.<br>
 * [Tooltip](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#tooltip)
 * [Enter,Update, Exit pattern](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#functie-drawbars---enter)
 
-## Persoonlijke progressie
+## Documentatie
 
 * [Functional pattern](https://github.com/EyobDejene/frontend-data/wiki/Opschonen-enqu%C3%AAte-data) 
 * [Werken met svg](https://github.com/EyobDejene/frontend-data/wiki/D3--experimentals#svg-smiley)
-* [D3.js](https://github.com/EyobDejene/frontend-data/wiki/D3--experimentals#wat-is-d3)
-* [D3 patterns](https://github.com/EyobDejene/frontend-data/wiki/Enter,-Update,-Exit-pattern#enter-update-exit-pattern)
+* [Wat is D3.js](https://github.com/EyobDejene/frontend-data/wiki/D3--experimentals#wat-is-d3)
+* [Wat zijn D3 patterns](https://github.com/EyobDejene/frontend-data/wiki/Enter,-Update,-Exit-pattern#enter-update-exit-pattern)
 
 ## Wiki
 Lees [wiki](https://github.com/EyobDejene/frontend-data/wiki) voor het hele proces. 
-
 
 # Verder ontwikkelen
 Wil je verder werken aan het project of een eigen versie van het bestaande project willen maken dan is het 
