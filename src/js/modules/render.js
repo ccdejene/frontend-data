@@ -237,14 +237,17 @@ export function render(data) {
      * Single filter on hover circle
      */
     function filterByCategory(circles, orgin) {
+        // select all legends and check amount of labels that contains active class
         let labelsChecked = svg.select(".legendCells").selectAll('.label').filter(".active").nodes().length
+        //if there are no items in multiple legend are selected  run this
         if (labelsChecked == 0) {
+            // filter the circles who doesnt match the selected  orgin and add style
             wrapper.selectAll(".node")
                 .filter(function (d) {
                     return d.cat !== orgin;
                 })
                 .transition().duration(500).style("opacity", 0.1)
-
+            // filter the circles who  match with the selected orgin and add style
             wrapper.selectAll(".node")
                 .filter(function (d) {
                     return d.cat == orgin;
@@ -301,8 +304,11 @@ export function render(data) {
 
 
     function showTooltip(d) {
+        // select the selected circle and add a stroke color
         d3.select(this).selectAll('circle').style('stroke', "rgba(0, 0, 0, 0.4)")
+        // give the tooltip a transition
         tooltip.transition().duration(200).style("opacity", .9);
+        // add elements inside tooltip
         tooltip.html(`
                       <span class="objectOrgin">
                         <span class="categoryOrgin" style="background-color:${scaleColor(d.cat)};"></span>
@@ -311,8 +317,8 @@ export function render(data) {
                       <span class="objectType">${d.objectType}</span>
                       <span class="objectAmount">${d.amount}</span>`)
 
+        // call the filterByCategory with the circles data and selected category orgin
         filterByCategory(circles, d.cat)
-
     }
 
     function followMouseTooltip() {
@@ -348,7 +354,7 @@ export function render(data) {
         });
         let selected = this
 
-        selectionChanged(filterData, selected,)
+        selectionChanged(filterData, selected)
 
     }
 
@@ -383,23 +389,22 @@ export function render(data) {
      *
      */
 
-    /* pattern from
-    https://beta.vizhub.com/Razpudding/4a61de4a4034423a98ae79d0135781f7?edit=files&file=index.js
-    modified by Eyob Westerink*/
+        /* pattern from
+        https://beta.vizhub.com/Razpudding/4a61de4a4034423a98ae79d0135781f7?edit=files&file=index.js
+        modified by Eyob Westerink*/
+        const svg_bars = d3.select("#vis-container").append('svg')
+        const margin = {top: 50, right: 30, bottom: 85, left: 50}
+        const bar_height = 320 - margin.top - margin.bottom;
+        const bar_width = 460 - margin.left - margin.right
+        /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
+        const group = svg_bars
+            .attr("height", "320")
+            .attr("width", "460")
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    const svg_bars = d3.select("#vis-container").append('svg')
-    const margin = {top: 50, right: 30, bottom: 85, left: 50}
-    const bar_height = 320 - margin.top - margin.bottom;
-    const bar_width = 460 - margin.left - margin.right
-    /* Conventional margins: https://bl.ocks.org/mbostock/3019563. */
-    const group = svg_bars
-        .attr("height", "320")
-        .attr("width", "460")
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-    const x = d3.scaleBand().padding(0.2)
-    const y = d3.scaleLinear()
+        const x = d3.scaleBand().padding(0.2)
+        const y = d3.scaleLinear()
 
     makeVisualization(data)
 
@@ -440,26 +445,27 @@ export function render(data) {
         svg_bars.select('.axis-y')
             .call(d3.axisLeft(y).ticks(10))
 
-        // set bottom axis
+        // set x axis
         svg_bars.select('.axis-x')
             .call(d3.axisBottom(x))
 
         // set bar height and width
         svg_bars.selectAll('.bar')
+            .transition()
+            .duration(800)
+            .delay(10)
             .attr("height", function (d) {
                 return bar_height - y(0);
             })
             .attr("y", function (d) {
                 return y(0);
             })
-            .transition()
-            .duration(800)
-            .delay(1000)
             .attr('x', d => x(d.objectType))
             .attr('y', d => y(d.amount))
             .attr('width', x.bandwidth())
             .attr('height', d => bar_height - y(d.amount))
             .attr('fill', d => scaleColor(d.cat))
+
 
         // remove the label
         svg_bars.selectAll(".bar-label").remove()
@@ -502,7 +508,7 @@ export function render(data) {
             .classed("showChart", true)
             .transition()
             .duration(800)
-            .delay(1500)
+            .delay(1000)
 
         // add text to barchart x-axis
         let text = d3.select(".axis-x")
@@ -536,17 +542,20 @@ export function render(data) {
 
     // add x and y axes to svg
     function setAxes() {
+        // add to the group a group which contians a class axis-x and place de bottom axis values
         group
             .append('g')
             .attr('class', 'axis axis-x')
             .call(d3.axisBottom(x)).attr('transform', 'translate(0,' + bar_height + ')')
 
+        // add to the group a class axis-y and place the  y values on the axis
         group
             .append('g')
             .attr('class', 'axis axis-y')
             .call(d3.axisLeft(y).ticks(10))
 
 
+        // add rotate the x labels in the axis-x
         let text = d3.select(".axis-x")
         text.selectAll(".tick").select("text")
             .attr("transform", "rotate(-30)")
@@ -556,6 +565,15 @@ export function render(data) {
             .attr("x", "-0.5em")
             .style("text-anchor", "end")
 
+        // center the x text
+        d3.select('.axis-x')
+            .append('text')
+            .classed("axis-label",true)
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below
+
+
+        // add label x axis
         // d3.select('.axis-x')
         //     .append('text')
         //     .classed("axis-label",true)
@@ -563,15 +581,10 @@ export function render(data) {
         //     .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350/3))+")")  // centre below axis
         //     .text("Categorie")
 
-        d3.select('.axis-x')
-            .append('text')
-            .classed("axis-label",true)
-            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate("+ (bar_width/2) +","+(bar_height-(350)-margin.top)+")")  // centre below
-            // axis
 
 
 
+         // add label y axis
         // d3.select('.axis-y')
         //     .append('text')
         //     .classed("axis-label",true)
