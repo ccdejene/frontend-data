@@ -41,6 +41,10 @@ wereldculturen op te vragen.<br>
 * Barchart visualisatie
 * Zoeken 
 
+## Toekomstie features
+* Live zoek suggesties
+* Zoeken op categorie thema's
+
 ## Code snippets
 
 * [Code snippets](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets)
