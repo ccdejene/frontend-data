@@ -36,13 +36,13 @@ wereldculturen op te vragen.<br>
 
 ## Features
 * Fetch data van collectie database
-* Tooltip
 * Zoom-in op bubble
 * Filter op meerdere continenten
 * Barchart visualisatie
 * Zoeken 
 
 ## Code snippets
+
 * [Code snippets](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets)
 * [Fetch data d3](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#fetch-data)
 * [Data omzetten](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#data-omzetten)
@@ -62,6 +62,13 @@ wereldculturen op te vragen.<br>
 
 ## Wiki
 Lees [wiki](https://github.com/EyobDejene/frontend-data/wiki) voor het hele proces. 
+
+## Persoonlijke progressie
+
+* [Data opschonen](https://github.com/EyobDejene/functional-data/wiki/Opschonen-enqu%C3%AAte-data) 
+* [Werken met svg](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#svg-smiley)
+* [D3.js](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#wat-is-d3)
+
 
 # Verder ontwikkelen
 Wil je verder werken aan het project of een eigen versie van het bestaande project willen maken dan is het 
@@ -104,6 +111,6 @@ repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoe
 
 ## Credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
-* 
+
 
 
