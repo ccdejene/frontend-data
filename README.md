@@ -1,16 +1,15 @@
-# Waar kan ik het meeste vinden van ...
-<a href="https://gyazo.com/2ff6f826468469cab40d79e5a0e68d1e"><img src="https://i.gyazo.com/2ff6f826468469cab40d79e5a0e68d1e.gif" alt="Image from Gyazo" width="1000"/></a>
+# Waar kan ik het meeste vinden over..
+<a href="https://gyazo.com/cfee7d041d6f9188b1c221c8ed895d63"><img src="https://i.gyazo.com/cfee7d041d6f9188b1c221c8ed895d63.gif" alt="Image from Gyazo" width="1000"/></a>
 ## Live demo
-[Bekijk de demo](https://eyobdejene.github.io/)
+[Bekijk de demo](https://eyobdejene.github.io/frontend-data/)
 
 ## Concept
 Met deze visualisatie kan de bezoeker van het museum er achter komen hoeveel objecten van bepaald onderwerp zijn te 
-vinden
- in het museum.<br>
+vinden in het museum.<br>
 De objecten worden op basis van hun continent gecategoriseerd<br>
 De bezoeker kan met behulp van zijn of haar eigen input het onderwerp invoeren om er achter te komen waar de meeste 
 objecten vandaan komen.<br>
-[Lees meer](https://github.com/EyobDejene/functional-data/wiki/Concept)
+[Lees meer](https://github.com/EyobDejene/frontend-data/wiki/Concept)
 
 ## Doelgroep
 Deze visualisatie is gemaakt voor de bezoekers van het museum.
@@ -29,32 +28,47 @@ Het opschonen en categoriseren heb doormiddel van vanilla javascript gedaan.
 Van alle objecten die worden opgehaald heb ik er voor gezorgd dat de 10 objecten met de meeste resultaten 
 gecategoriseerd worden op basis van het continent.
 
+
 **Sparql**<br>
 Via SparQL queries (RDF gebaseerde gegevens) is het mogelijk om bepaalde informatie uit de verzameling van 
 wereldculturen op te vragen.<br>
-[Lees meer](https://github.com/EyobDejene/functional-programming/wiki/Data-query)
+[Lees meer](https://github.com/EyobDejene/frontend-data/wiki/Data-query)
 
 ## Features
 * Fetch data van collectie database
-* Weergeven van data in visualisatie
-
-## Toekomstige features
 * Zoom-in op bubble
+* Filter op meerdere continenten
+* Barchart visualisatie
+* Zoeken 
 
 ## Code snippets
-* [Code snippets](https://github.com/EyobDejene/functional-programming/wiki/Code-snippets)
-* [Fetch data d3](https://github.com/EyobDejene/functional-programming/wiki/Code-snippets#fetch-data)
-* [Data omzetten](https://github.com/EyobDejene/functional-programming/wiki/Code-snippets#data-omzetten)
-* [Bubbles svg](https://github.com/EyobDejene/functional-programming/wiki/Code-snippets#bubbles-svg-d3)
+
+* [Code snippets](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets)
+* [Fetch data d3](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#fetch-data)
+* [Data omzetten](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#data-omzetten)
+* [Bubbles svg](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#bubbles-svg-d3)
+* [Filter](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#filters)
+* [Barchart](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#barchart)
+* [Bar indicator](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#functie-update-pijl-boven-barchart)
+* [Tooltip](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#tooltip)
+* [Enter,Update, Exit pattern](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#functie-drawbars---enter)
 
 ## Persoonlijke progressie
 
-* [Data opschonen](https://github.com/EyobDejene/functional-programming/wiki/Opschonen-enqu%C3%AAte-data) 
-* [Werken met svg](https://github.com/EyobDejene/functional-programming/wiki/D3--experimentals#svg-smiley)
-* [D3.js](https://github.com/EyobDejene/functional-programming/wiki/D3--experimentals#wat-is-d3)
+* [Functional pattern](https://github.com/EyobDejene/frontend-data/wiki/Opschonen-enqu%C3%AAte-data) 
+* [Werken met svg](https://github.com/EyobDejene/frontend-data/wiki/D3--experimentals#svg-smiley)
+* [D3.js](https://github.com/EyobDejene/frontend-data/wiki/D3--experimentals#wat-is-d3)
+* [D3 patterns](https://github.com/EyobDejene/frontend-data/wiki/Enter,-Update,-Exit-pattern#enter-update-exit-pattern)
 
 ## Wiki
-Lees [wiki](https://github.com/EyobDejene/functional-programming/wiki) voor het hele proces. 
+Lees [wiki](https://github.com/EyobDejene/frontend-data/wiki) voor het hele proces. 
+
+## Persoonlijke progressie
+
+* [Data opschonen](https://github.com/EyobDejene/functional-data/wiki/Opschonen-enqu%C3%AAte-data) 
+* [Werken met svg](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#svg-smiley)
+* [D3.js](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#wat-is-d3)
+
 
 # Verder ontwikkelen
 Wil je verder werken aan het project of een eigen versie van het bestaande project willen maken dan is het 
@@ -66,7 +80,7 @@ noodzakelijk om de volgende sofware vooraf geïnstalleerd te hebben:
 
 ## Installatie
 * `git clone <repository-url>`
-* `cd functional-programming`
+* `cd frontend-data`
 * `npm install`
 
 ### Build
@@ -94,9 +108,9 @@ repository op GitHub haalt en de bestanden desgewenst via een buildproces uitvoe
 * [Naustud.io](https://naustud.io/tech-stack/)
 * [Responding to text](https://bl.ocks.org/curran/a683a360b9c78397a0db94ce15f473ce)
 * [Introduction SVG](https://learn-the-web.algonquindesign.ca/courses/web-dev-3/svg-smiley-face/)
+
 ## Credits
 *  Datavisual voorbeeld van [trongthanh](https://github.com/trongthanh/techstack)
-*  Helpen met sparql query & d3 [Nick](https://github.com/CountNick)
 
 
 
