@@ -63,12 +63,6 @@ wereldculturen op te vragen.<br>
 ## Wiki
 Lees [wiki](https://github.com/EyobDejene/frontend-data/wiki) voor het hele proces. 
 
-## Persoonlijke progressie
-
-* [Data opschonen](https://github.com/EyobDejene/functional-data/wiki/Opschonen-enqu%C3%AAte-data) 
-* [Werken met svg](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#svg-smiley)
-* [D3.js](https://github.com/EyobDejene/functional-data/wiki/D3--experimentals#wat-is-d3)
-
 
 # Verder ontwikkelen
 Wil je verder werken aan het project of een eigen versie van het bestaande project willen maken dan is het 
