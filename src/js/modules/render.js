@@ -451,20 +451,21 @@ export function render(data) {
 
         // set bar height and width
         svg_bars.selectAll('.bar')
-            .transition()
-            .duration(800)
-            .delay(10)
             .attr("height", function (d) {
                 return bar_height - y(0);
             })
             .attr("y", function (d) {
                 return y(0);
             })
+            .transition()
+            .duration(800)
+            .delay(1000)
             .attr('x', d => x(d.objectType))
             .attr('y', d => y(d.amount))
             .attr('width', x.bandwidth())
             .attr('height', d => bar_height - y(d.amount))
             .attr('fill', d => scaleColor(d.cat))
+
 
 
         // remove the label
