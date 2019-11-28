@@ -52,6 +52,7 @@ wereldculturen op te vragen.<br>
 * [Data omzetten](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#data-omzetten)
 * [Bubbles svg](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#bubbles-svg-d3)
 * [Filter](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#filters)
+* [Zoom](https://github.com/EyobDejene/frontend-data/wiki/Zoom)
 * [Barchart](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#barchart)
 * [Bar indicator](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#functie-update-pijl-boven-barchart)
 * [Tooltip](https://github.com/EyobDejene/frontend-data/wiki/Code-snippets#tooltip)
