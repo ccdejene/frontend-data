@@ -355,8 +355,13 @@ export function render(data) {
         let selected = this
 
         selectionChanged(filterData, selected)
+        d3.select('body').style('cursor','none');
 
     }
+
+    d3.select('body').on("mousemove",function () {
+        d3.select('body').style('cursor','pointer');
+    })
 
     function zoomed() {
         wrapper.attr("transform", d3.event.transform);
