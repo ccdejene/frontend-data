@@ -448,6 +448,11 @@
         nodes.on("click", clicked);
         svg.on("click", reset);
         function clicked(d) {
+
+            // remove cursor
+            d3.select('body').style('cursor','none');
+
+
             d3.event.stopPropagation();
             wrapper.transition().duration(750).call(
                 zoom.transform,
@@ -466,7 +471,13 @@
 
             selectionChanged(filterData, selected);
 
+
         }
+
+        //reset mousepointer on mousemove
+        d3.select('svg').on("mousemove",function () {
+            d3.select('body').style('cursor','pointer');
+        });
 
         function zoomed() {
             wrapper.attr("transform", d3.event.transform);
